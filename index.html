@@ -75,7 +75,7 @@
         }
         
         .weakness-4x {
-            border: 1px solid #ff0000;
+         border: 0px solid #ff0000;   
         }
         
         .weakness-2x {
@@ -83,7 +83,7 @@
         }
         
         .resist-025x {
-            border: 1px solid #00ff00;
+            border: 0px solid #00ff00;
         }
         
         .resist-05x {
@@ -176,11 +176,9 @@
 </head>
 <body>
     <h1>Doodle World Type Coverage</h1>
-    <div class="teambuilder-link">Check out the <a href="https://bwiffs.github.io/doodle-world-teambuilder/" target="_blank">Doodle World Teambuilder</a> </div>
+    <div class="teambuilder-link">Check out the <a href="https://bwiffs.github.io/doodle-world-teambuilder/" target="_blank">Doodle World Teambuilder</a></div>
     
-    <div class="team-container" id="team-container">
-    
-    </div>
+    <div class="team-container" id="team-container"></div>
     
     <div class="team-summary">
         <h2>Team Summary</h2>
@@ -205,7 +203,6 @@
     </div>
 
     <script>
-       
         const typeChart = {
             "basic": {
                 "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
@@ -329,10 +326,15 @@
             }
         };
 
-      
         const allTypes = Object.keys(typeChart);
-        
-        
+        const traits = [
+            "None", "Absorber", "Apex", "Arid", "Bright Lights", "Caliginous", 
+            "Chlorokinesis", "Conductor", "Divine Beast", "Filament", "Fire Up", 
+            "Hard Candy", "Herbivore", "Karna", "Levitate", "Melting Point", 
+            "Mushboom", "Nitelite", "Puffball", "Resilience", "Skyborn", 
+            "Spiteful", "Stormwater", "Tumble", "Unbreakable", "Water Absorb"
+        ];
+
         const teamContainer = document.getElementById('team-container');
         
         for (let i = 1; i <= 6; i++) {
@@ -349,6 +351,10 @@
                         <option value="">Secondary Type</option>
                         ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
                     </select>
+                    <select class="type-select trait" data-doodle="${i}">
+                        <option value="">Trait</option>
+                        ${traits.map(trait => `<option value="${trait}">${trait}</option>`).join('')}
+                    </select>
                 </div>
                 
                 <div class="result-title">Weaknesses:</div>
@@ -363,7 +369,6 @@
             teamContainer.appendChild(doodleBox);
         }
         
-        
         document.querySelectorAll('.type-select').forEach(select => {
             select.addEventListener('change', updateTypeCoverage);
         });
@@ -372,9 +377,9 @@
             const doodleIndex = this.getAttribute('data-doodle');
             const primaryType = document.querySelector(`.primary-type[data-doodle="${doodleIndex}"]`).value;
             const secondaryType = document.querySelector(`.secondary-type[data-doodle="${doodleIndex}"]`).value;
+            const trait = document.querySelector(`.trait[data-doodle="${doodleIndex}"]`).value;
             
             if (!primaryType) {
-                
                 document.querySelector(`.weaknesses[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
                 document.querySelector(`.resistances[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
                 document.querySelector(`.immunities[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
@@ -382,36 +387,95 @@
                 return;
             }
             
-            
-            const weaknesses = calculateWeaknesses(primaryType, secondaryType);
-            const resistances = calculateResistances(primaryType, secondaryType);
-            const immunities = calculateImmunities(primaryType, secondaryType);
-            
+            const weaknesses = calculateWeaknesses(primaryType, secondaryType, trait);
+            const resistances = calculateResistances(primaryType, secondaryType, trait);
+            const immunities = calculateImmunities(primaryType, secondaryType, trait);
             
             updateResultList(`.weaknesses[data-doodle="${doodleIndex}"]`, weaknesses, 'weakness');
             updateResultList(`.resistances[data-doodle="${doodleIndex}"]`, resistances, 'resist');
             updateResultList(`.immunities[data-doodle="${doodleIndex}"]`, immunities);
             
-            
             updateTeamSummary();
         }
         
-        function calculateWeaknesses(primary, secondary) {
-            const results = {};
+        function applyTraitEffects(primary, secondary, trait, attackingType, effectiveness) {
+            if (trait === "None") return effectiveness;
             
+            
+            if ((trait === "Arid" && attackingType === "water") ||
+                (trait === "Bright Lights" && attackingType === "dark") ||
+                (trait === "Caliginous" && attackingType === "light") ||
+                (trait === "Chlorokinesis" && attackingType === "plant") ||
+                (trait === "Conductor" && attackingType === "spark") ||
+                (trait === "Divine Beast" && attackingType === "beast") ||
+                (trait === "Filament" && attackingType === "spark") ||
+                (trait === "Fire Up" && attackingType === "fire") ||
+                (trait === "Hard Candy" && attackingType === "fire") ||
+                (trait === "Herbivore" && attackingType === "plant") ||
+                (trait === "Levitate" && attackingType === "earth") ||
+                (trait === "Melting Point" && attackingType === "ice") ||
+                (trait === "Skyborn" && attackingType === "air") ||
+                (trait === "Stormwater" && attackingType === "water") ||
+                (trait === "Water Absorb" && attackingType === "water")) {
+                return 0;
+            }
+            
+            
+            if (trait === "Karna" && attackingType === "earth") {
+                return effectiveness * 0.5;
+            }
+            
+            if (trait === "Nitelite" && attackingType === "dark") {
+                return effectiveness * 0.5;
+            }
+            
+            if (trait === "Tumble" && attackingType === "melee") {
+                return effectiveness * 0.5;
+            }
+            
+            if ((trait === "Mushboom" || trait === "Puffball") && attackingType === "air") {
+                return effectiveness * 0.25;
+            }
+            
+            // Special cases
+            if (trait === "Apex" && (primary === "beast" || secondary === "beast")) {
+                if (typeChart["beast"][attackingType] !== 1) {
+                    return effectiveness / typeChart["beast"][attackingType];
+                }
+            }
+            
+            if (trait === "Resilience" && effectiveness < 1) {
+                return effectiveness * 0.75;
+            }
+            
+            if (trait === "Spiteful" && effectiveness !== 0) {
+                return 1 / effectiveness;
+            }
+            
+            if (trait === "Unbreakable" && effectiveness > 1) {
+                return effectiveness * 0.75; 
+            }
+            
+            return effectiveness;
+        }
+        
+        function calculateWeaknesses(primary, secondary, trait) {
+            const results = {};
             
             allTypes.forEach(attackingType => {
                 const primaryEffect = typeChart[primary][attackingType];
                 const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
                 
-                const combinedEffect = primaryEffect * secondaryEffect;
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
                 
                 if (combinedEffect > 1) {
-                    // Weakness
-                    if (combinedEffect === 4) {
+                    if (combinedEffect >= 3.9) { 
                         results[attackingType] = 'weak-4x';
-                    } else {
+                    } else if (combinedEffect > 1.1) {
                         results[attackingType] = 'weak-2x';
+                    } else if (combinedEffect > 1) {
+                        results[attackingType] = 'weak-075x';
                     }
                 }
             });
@@ -419,21 +483,20 @@
             return results;
         }
         
-        function calculateResistances(primary, secondary) {
+        function calculateResistances(primary, secondary, trait) {
             const results = {};
-            
             
             allTypes.forEach(attackingType => {
                 const primaryEffect = typeChart[primary][attackingType];
                 const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
                 
-                const combinedEffect = primaryEffect * secondaryEffect;
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
                 
                 if (combinedEffect < 1 && combinedEffect > 0) {
-                   
-                    if (combinedEffect === 0.25) {
+                    if (combinedEffect <= 0.26) { // Account for floating point math
                         results[attackingType] = 'resist-025x';
-                    } else {
+                    } else if (combinedEffect < 0.9) {
                         results[attackingType] = 'resist-05x';
                     }
                 }
@@ -442,17 +505,17 @@
             return results;
         }
         
-        function calculateImmunities(primary, secondary) {
+        function calculateImmunities(primary, secondary, trait) {
             const results = {};
             
-           
             allTypes.forEach(attackingType => {
                 const primaryEffect = typeChart[primary][attackingType];
                 const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
                 
-                const combinedEffect = primaryEffect * secondaryEffect;
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
                 
-                if (combinedEffect === 0) {
+                if (Math.abs(combinedEffect) < 0.1) { 
                     results[attackingType] = 'immune';
                 }
             });
@@ -470,10 +533,8 @@
             
             element.innerHTML = '';
             
-            
             const typesArray = Object.entries(typeEffects)
                 .sort((a, b) => {
-                    
                     if (a[1] !== b[1]) {
                         return a[1].localeCompare(b[1]);
                     }
@@ -484,17 +545,16 @@
                 const badge = document.createElement('span');
                 badge.className = `type-badge ${type}`;
                 
-                
                 if (effectType) {
                     badge.classList.add(effect);
                 }
                 
-                
                 let text = type.charAt(0).toUpperCase() + type.slice(1);
                 if (effect === 'weak-4x') text += ' (4×)';
-                if (effect === 'weak-2x') text += ' (2×)';
-                if (effect === 'resist-025x') text += ' (¼×)';
-                if (effect === 'resist-05x') text += ' (½×)';
+                else if (effect === 'weak-2x') text += ' (2×)';
+                else if (effect === 'weak-075x') text += ' (1.5×)';
+                else if (effect === 'resist-025x') text += ' (¼×)';
+                else if (effect === 'resist-05x') text += ' (½×)';
                 if (effect === 'immune') badge.classList.add('immune');
                 
                 badge.textContent = text;
@@ -507,14 +567,13 @@
             const allResistances = {};
             const allImmunities = new Set();
             
-            
             document.querySelectorAll('.doodle-box').forEach((box, index) => {
                 const primary = box.querySelector('.primary-type').value;
                 const secondary = box.querySelector('.secondary-type').value;
+                const trait = box.querySelector('.trait').value;
                 
                 if (primary) {
-                    
-                    const weaknesses = calculateWeaknesses(primary, secondary);
+                    const weaknesses = calculateWeaknesses(primary, secondary, trait);
                     Object.entries(weaknesses).forEach(([type, effect]) => {
                         if (!allWeaknesses[type]) allWeaknesses[type] = { count: 0, maxEffect: effect };
                         allWeaknesses[type].count++;
@@ -522,10 +581,14 @@
                         else if (allWeaknesses[type].maxEffect !== 'weak-4x' && effect === 'weak-2x') {
                             allWeaknesses[type].maxEffect = 'weak-2x';
                         }
+                        else if (allWeaknesses[type].maxEffect !== 'weak-4x' && 
+                                 allWeaknesses[type].maxEffect !== 'weak-2x' && 
+                                 effect === 'weak-075x') {
+                            allWeaknesses[type].maxEffect = 'weak-075x';
+                        }
                     });
                     
-                   
-                    const resistances = calculateResistances(primary, secondary);
+                    const resistances = calculateResistances(primary, secondary, trait);
                     Object.entries(resistances).forEach(([type, effect]) => {
                         if (!allResistances[type]) allResistances[type] = { count: 0, maxEffect: effect };
                         allResistances[type].count++;
@@ -535,19 +598,16 @@
                         }
                     });
                     
-                    
-                    const immunities = calculateImmunities(primary, secondary);
+                    const immunities = calculateImmunities(primary, secondary, trait);
                     Object.keys(immunities).forEach(type => {
                         allImmunities.add(type);
                     });
                 }
             });
             
-           
             updateTeamResultList('#team-weaknesses', allWeaknesses, 'weakness');
             updateTeamResultList('#team-resistances', allResistances, 'resist');
             updateTeamResultList('#team-immunities', allImmunities);
-            
             
             const noResistances = allTypes.filter(type => {
                 return !allResistances[type] && !allImmunities.has(type);
@@ -568,7 +628,6 @@
             
             let typesArray;
             if (effectType === 'weakness' || effectType === 'resist') {
-                
                 typesArray = Object.entries(typeData)
                     .map(([type, data]) => ({
                         type,
@@ -576,13 +635,11 @@
                         effect: data.maxEffect
                     }))
                     .sort((a, b) => {
-                        
                         if (b.count !== a.count) return b.count - a.count;
                         if (b.effect !== a.effect) return b.effect.localeCompare(a.effect);
                         return a.type.localeCompare(b.type);
                     });
             } else {
-                
                 typesArray = Array.isArray(typeData) ? 
                     typeData.sort((a, b) => a.localeCompare(b)) : 
                     Array.from(typeData).sort((a, b) => a.localeCompare(b));
@@ -594,17 +651,16 @@
                 
                 badge.className = `type-badge ${typeName}`;
                 
-                
                 if (effectType) {
-                    badge.classList.add(effectType);
+                    badge.classList.add(typeof type === 'object' ? type.effect : '');
                 }
-                
                 
                 let text = typeName.charAt(0).toUpperCase() + typeName.slice(1);
                 if (effectType === 'weakness' || effectType === 'resist') {
                     text += ` (${type.count})`;
                     if (type.effect === 'weak-4x') text += ' 4×';
                     else if (type.effect === 'weak-2x') text += ' 2×';
+                    else if (type.effect === 'weak-075x') text += ' 1.5×';
                     else if (type.effect === 'resist-025x') text += ' ¼×';
                     else if (type.effect === 'resist-05x') text += ' ½×';
                 }
