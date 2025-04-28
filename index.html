@@ -75,11 +75,15 @@
         }
         
         .weakness-4x {
-         border: 0px solid #ff0000;   
+            border: 0px solid #ff0000;
         }
         
         .weakness-2x {
             opacity: 1;
+        }
+        
+        .weakness-075x {
+            border: 0px solid #ff6666;
         }
         
         .resist-025x {
@@ -328,11 +332,12 @@
 
         const allTypes = Object.keys(typeChart);
         const traits = [
-            "None", "Absorber", "Apex", "Arid", "Bright Lights", "Caliginous", 
-            "Chlorokinesis", "Conductor", "Divine Beast", "Filament", "Fire Up", 
-            "Hard Candy", "Herbivore", "Karna", "Levitate", "Melting Point", 
-            "Mushboom", "Nitelite", "Puffball", "Resilience", "Skyborn", 
-            "Spiteful", "Stormwater", "Tumble", "Unbreakable", "Water Absorb"
+            "None", "Absorber-Basic", "Absorber-Earth", "Absorber-Ice", "Absorber-Spark",
+            "Apex", "Arid", "Bright Lights", "Caliginous", "Chlorokinesis", "Conductor",
+            "Divine Beast", "Filament", "Fire Up", "Fireproof Armour", "Hard Candy",
+            "Herbivore", "Karna", "Levitate", "Melting Point", "Mushboom", "Nitelite",
+            "Puffball", "Resilience", "Skyborn", "Spiteful", "Stormwater", "Tumble",
+            "Unbreakable", "Water Absorb"
         ];
 
         const teamContainer = document.getElementById('team-container');
@@ -401,6 +406,22 @@
         function applyTraitEffects(primary, secondary, trait, attackingType, effectiveness) {
             if (trait === "None") return effectiveness;
             
+            // Absorber immunities
+            if ((trait === "Absorber-Basic" && attackingType === "basic") ||
+                (trait === "Absorber-Earth" && attackingType === "earth") ||
+                (trait === "Absorber-Ice" && attackingType === "ice") ||
+                (trait === "Absorber-Spark" && attackingType === "spark")) {
+                return 0;
+            }
+            
+            
+            if (trait === "Fireproof Armour" && attackingType === "fire") {
+                if (effectiveness >= 3.9) return 2;       // 4x → 2x
+                if (effectiveness >= 1.9) return 1;       // 2x → 1x
+                if (Math.abs(effectiveness - 1) < 0.1) return 0.5;  // 1x → 0.5x
+                if (effectiveness <= 0.51) return 0.25;   // 0.5x → 0.25x
+            }
+            
             
             if ((trait === "Arid" && attackingType === "water") ||
                 (trait === "Bright Lights" && attackingType === "dark") ||
@@ -437,15 +458,15 @@
                 return effectiveness * 0.25;
             }
             
-            // Special cases
+            
             if (trait === "Apex" && (primary === "beast" || secondary === "beast")) {
                 if (typeChart["beast"][attackingType] !== 1) {
                     return effectiveness / typeChart["beast"][attackingType];
                 }
             }
             
-            if (trait === "Resilience" && effectiveness < 1) {
-                return effectiveness * 0.75;
+            if (trait === "Resilience" && effectiveness < 0.5) {
+                return effectiveness * 0.25;
             }
             
             if (trait === "Spiteful" && effectiveness !== 0) {
@@ -472,9 +493,9 @@
                 if (combinedEffect > 1) {
                     if (combinedEffect >= 3.9) { 
                         results[attackingType] = 'weak-4x';
-                    } else if (combinedEffect > 1.1) {
+                    } else if (combinedEffect > 1.9) {
                         results[attackingType] = 'weak-2x';
-                    } else if (combinedEffect > 1) {
+                    } else if (combinedEffect > 1.1) {
                         results[attackingType] = 'weak-075x';
                     }
                 }
@@ -494,7 +515,7 @@
                 combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
                 
                 if (combinedEffect < 1 && combinedEffect > 0) {
-                    if (combinedEffect <= 0.26) { // Account for floating point math
+                    if (combinedEffect <= 0.26) { 
                         results[attackingType] = 'resist-025x';
                     } else if (combinedEffect < 0.9) {
                         results[attackingType] = 'resist-05x';
