@@ -75,7 +75,7 @@
         }
 
         .weakness-4x {
-            border: 0px solid #ff0000;
+            border: 2px solid #ff0000;
         }
 
         .weakness-2x {
@@ -83,11 +83,11 @@
         }
 
         .weakness-075x {
-            border: 0px solid #ff6666;
+            border: 1px solid #ff6666;
         }
 
         .resist-025x {
-            border: 0px solid #00ff00;
+            border: 2px solid #00ff00;
         }
 
         .resist-05x {
@@ -95,7 +95,7 @@
         }
 
         .immune {
-            border: 0px solid #ffff00;
+            border: 2px solid #ffff00;
         }
 
         .team-summary {
@@ -414,15 +414,15 @@
                 return 0;
             }
 
-
+            // Fireproof Armour reduces fire damage
             if (trait === "Fireproof Armour" && attackingType === "fire") {
-                if (effectiveness >= 3.9) return 2;       // 4x → 2x
-                if (effectiveness >= 1.9) return 1;       // 2x → 1x
-                if (Math.abs(effectiveness - 1) < 0.1) return 0.5;  // 1x → 0.5x
-                if (effectiveness <= 0.51) return 0.25;   // 0.5x → 0.25x
+                if (effectiveness > 3.5) return 2;       // 4x → 2x
+                if (effectiveness > 1.5) return 1;       // 2x → 1x
+                if (effectiveness > 0.9 && effectiveness < 1.1) return 0.5;  // 1x → 0.5x
+                if (effectiveness < 0.6) return 0.25;   // 0.5x → 0.25x
             }
 
-
+            // Full immunities
             if ((trait === "Arid" && attackingType === "water") ||
                 (trait === "Bright Lights" && attackingType === "dark") ||
                 (trait === "Caliginous" && attackingType === "light") ||
@@ -441,7 +441,7 @@
                 return 0;
             }
 
-
+            // Damage reduction traits
             if (trait === "Karna" && attackingType === "earth") {
                 return effectiveness * 0.5;
             }
@@ -458,7 +458,7 @@
                 return effectiveness * 0.25;
             }
 
-
+            // Special cases
             if (trait === "Apex" && (primary === "beast" || secondary === "beast")) {
                 if (typeChart["beast"][attackingType] !== 1) {
                     return effectiveness / typeChart["beast"][attackingType];
@@ -474,7 +474,7 @@
             }
 
             if (trait === "Unbreakable" && effectiveness > 1) {
-                return effectiveness * 0.75; 
+                return effectiveness * 0.75;
             }
 
             return effectiveness;
@@ -491,9 +491,9 @@
                 combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
 
                 if (combinedEffect > 1) {
-                    if (combinedEffect >= 3.9) { 
+                    if (combinedEffect >= 3.5) { 
                         results[attackingType] = 'weak-4x';
-                    } else if (combinedEffect > 1.9) {
+                    } else if (combinedEffect > 1.5) {
                         results[attackingType] = 'weak-2x';
                     } else if (combinedEffect > 1.1) {
                         results[attackingType] = 'weak-075x';
@@ -687,7 +687,7 @@
                 }
 
                 badge.textContent = text;
-                element.appendChild(badge);More actions
+                element.appendChild(badge);
             });
         }
     </script>
