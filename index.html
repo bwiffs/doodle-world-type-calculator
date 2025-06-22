@@ -1,1752 +1,696 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doodle World Teambuilder</title>
+    <title>Doodle World Type Coverage</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #121212;
-            color: #fff;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        .header {
-            margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            margin-bottom: 20px;
-        }
-        
-        .header a {
-            color: #4CAF50;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .header a:hover {
-            text-decoration: underline;
-        }
-        
-        .team-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
             max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .doodle-card {
-            border: 2px solid #444;
-            padding: 15px;
-            background-color: #222;
-            text-align: left;
-            border-radius: 8px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .expand-section {
-            display: none;
-            margin-top: 10px;
-            background-color: #333;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .moves-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .doodle-image {
-            display: block;
-            width: 100px;
-            height: 100px;
-            margin: 10px auto;
-            background-color: #444;
-            text-align: center;
-            line-height: 100px;
-            font-weight: bold;
-            border-radius: 5px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .clear-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #555;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
-        .clear-btn:hover {
-            background: #666;
-        }
-        
-        .equipment-container {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-        
-        .equipment-tab {
-            flex: 1;
-            min-width: 150px;
-        }
-        
-        .equipment-tab select {
-            width: 100%;
-        }
-        
-        button {
-            background-color: #444;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s;
-        }
-        
-        button:hover {
-            background-color: #555;
-        }
-        
-        select {
-            background-color: #333;
-            color: white;
-            border: 1px solid #444;
-            padding: 5px;
-            border-radius: 4px;
-            margin: 3px 0;
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .url-import-export {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            background-color: #222;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .url-import-export input {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #444;
-            background-color: #333;
-            color: white;
-            min-width: 300px;
-            flex-grow: 1;
-        }
-        
-        .search-container { 
-            position: relative; 
-        }
-        
-        .search-input { 
-            display: none; 
-            position: absolute; 
-            bottom: -5%; 
-            left: 0; 
-            width: 100%; 
-            z-index: 100; 
-        }
-        
-        option { 
-            color: white; 
-        }
-        
-        option.mythic, select.mythic-selected { 
-            color: #b19cd9;
-            font-weight: bold;
-        }
-        
-        option.fire, select.fire-selected {
-            color: #ff8c00;
-            font-weight: bold;
-        }
-        
-        option.water, select.water-selected {
-            color: #1e90ff;
-            font-weight: bold;
-        }
-        
-        option.plant, select.plant-selected {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        
-        option.electric, select.electric-selected {
-            color: #FFEB3B;
-            font-weight: bold;
-        }
-        
-        option.beast, select.beast-selected {
-            color: #8B4513;
-            font-weight: bold;
-        }
-        
-        option.air, select.air-selected {
-            color: #87CEFA;
-            font-weight: bold;
-        }
-        
-        option.bug, select.bug-selected {
-            color: #32CD32;
-            font-weight: bold;
-        }
-        
-        option.earth, select.earth-selected {
-            color: #CD853F;
-            font-weight: bold;
-        }
-        
-        option.mind, select.mind-selected {
-            color: #FFB6C1;
-            font-weight: bold;
-        }
-        
-        option.melee, select.melee-selected {
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-        
-        option.food, select.food-selected {
-            color: #f5deb3;
-            font-weight: bold;
-        }
-        
-        option.light, select.light-selected {
-            color: #fffacd;
-            font-weight: bold;
-        }
-        
-        option.crystal, select.crystal-selected {
-            color: #00ced1;
-            font-weight: bold;
-        }
-        
-        option.metal, select.metal-selected {
-            color: #a9a9a9;
-            font-weight: bold;
-        }
-        
-        option.spirit, select.spirit-selected {
-            color: #9400d3;
-            font-weight: bold;
-        }
-        
-        option.ice, select.ice-selected {
-            color: #e0ffff;
-            font-weight: bold;
-        }
-        
-        option.dark, select.dark-selected {
-            color: #000000;
-            font-weight: bold;
-        }
-        
-        option.poison, select.poison-selected {
-            color: #da70d6;
-            font-weight: bold;
-        }
-        
-        select option:checked { 
-            background-color: #333 !important; 
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
         }
 
-        @media (max-width: 800px) {
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .doodle-box {
+            background: #222;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+
+        .type-select-container {
+            margin-bottom: 15px;
+        }
+
+        .type-select {
+            padding: 8px;
+            width: 100%;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .result-list {
+            min-height: 30px;
+            padding: 8px;
+            background: #333;
+            border-radius: 4px;
+            border: 1px solid #444;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .weakness-4x {
+            border: 0px solid #ff0000;
+        }
+
+        .weakness-2x {
+            opacity: 1;
+        }
+
+        .weakness-075x {
+            border: 0px solid #ff6666;
+        }
+
+        .resist-025x {
+            border: 0px solid #00ff00;
+        }
+
+        .resist-05x {
+            opacity: 1;
+        }
+
+        .immune {
+            border: 0px solid #ffff00;
+        }
+
+        .team-summary {
+            background: #222;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            margin-top: 20px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .summary-box {
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+            border: 1px solid #444;
+            min-height: 100px;
+        }
+
+        .summary-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .basic { background-color: #9E9E9E; }
+        .fire { background-color: #FF5722; }
+        .water { background-color: #2196F3; }
+        .plant { background-color: #4CAF50; }
+        .spark { background-color: #FFEB3B; color: #333; }
+        .beast { background-color: #795548; }
+        .air { background-color: #f0f8ff; color: #333; }
+        .insect { background-color: #8BC34A; }
+        .earth { background-color: #795548; }
+        .mind { background-color: #FF69B47; color: #333; }
+        .mind { background-color: #FF69B4; color: #333; }
+        .melee { background-color: #F44336; }
+        .food { background-color: #FF9800; }
+        .light { background-color: #FFC107; color: #333; }
+        .crystal { background-color: #00BCD4; }
+        .metal { background-color: #607D8B; }
+        .spirit { background-color: #9C27B0; }
+        .ice { background-color: #00BCD4; }
+        .dark { background-color: #433; }
+        .poison { background-color: #9C27B0; }
+        .mythic { background-color: #FF5722; }
+
+        .none {
+            color: #666;
+            font-style: italic;
+        }
+
+        .teambuilder-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .teambuilder-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .teambuilder-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
             .team-container {
                 grid-template-columns: 1fr;
             }
-            
-            .url-import-export {
-                flex-direction: column;
-            }
-            
-            .url-import-export input {
-                min-width: auto;
+
+            .summary-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Doodle World Teambuilder</h1>
-        <p>Check out the <a href="https://bwiffs.github.io/doodle-world-type-calculator/" target="_blank">Doodle World Type Calculator</a></p>
-    </div>
-    
-    <div class="url-import-export">
-        <button onclick="copyTeamCode()">Copy Team Code</button>
-        <button onclick="importFromCode()">Import Team Code</button>
-        <button onclick="importFromText()">Import Doodle from Text</button>
-    </div>
+    <h1>Doodle World Type Coverage</h1>
+    <div class="teambuilder-link">Check out the <a href="https://bwiffs.github.io/doodle-world-teambuilder/" target="_blank">Doodle World Teambuilder</a></div>
 
     <div class="team-container" id="team-container"></div>
 
+    <div class="team-summary">
+        <h2>Team Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-box">
+                <div class="summary-title">Team Weaknesses</div>
+                <div id="team-weaknesses" class="result-list">None</div>
+            </div>
+            <div class="summary-box">
+                <div class="summary-title">Team Resistances</div>
+                <div id="team-resistances" class="result-list">None</div>
+            </div>
+            <div class="summary-box">
+                <div class="summary-title">Team Immunities</div>
+                <div id="team-immunities" class="result-list">None</div>
+            </div>
+            <div class="summary-box">
+                <div class="summary-title">No Resistances</div>
+                <div id="team-no-resistances" class="result-list">None</div>
+            </div>
+        </div>
+    </div>
+
     <script>
-const doodles = [
+        const typeChart = {
+            "basic": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 2, "food": 1, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 0, "ice": 1, "dark": 1, "poison": 1, "mythic": 1
+            },
+            "fire": {
+                "basic": 1, "fire": 0.5, "water": 2, "plant": 0.5, "spark": 1, 
+                "beast": 0.5, "air": 1, "insect": 0.5, "earth": 2, "mind": 1, 
+                "melee": 1, "food": 0.5, "light": 1, "crystal": 1, "metal": 0.5, 
+                "spirit": 1, "ice": 2, "dark": 1, "poison": 1, "mythic": 1
+            },
+            "water": {
+                "basic": 1, "fire": 0.5, "water": 0.5, "plant": 2, "spark": 2, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 1, "food": 1, "light": 1, "crystal": 0.5, "metal": 0.5, 
+                "spirit": 1, "ice": 0.5, "dark": 1, "poison": 2, "mythic": 1
+            },
+            "plant": {
+                "basic": 1, "fire": 2, "water": 0.5, "plant": 0.5, "spark": 0.5, 
+                "beast": 1, "air": 2, "insect": 2, "earth": 0.5, "mind": 1, 
+                "melee": 1, "food": 0.5, "light": 0.5, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 2, "dark": 1, "poison": 2, "mythic": 1
+            },
+            "spark": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 0.5, 
+                "beast": 0.5, "air": 0.5, "insect": 1, "earth": 2, "mind": 1, 
+                "melee": 1, "food": 1, "light": 1, "crystal": 2, "metal": 0.5, 
+                "spirit": 1, "ice": 1, "dark": 1, "poison": 1, "mythic": 1
+            },
+            "beast": {
+                "basic": 1, "fire": 2, "water": 1, "plant": 1, "spark": 2, 
+                "beast": 2, "air": 1, "insect": 0.5, "earth": 1, "mind": 2, 
+                "melee": 1, "food": 0.5, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 1, "dark": 0.5, "poison": 1, "mythic": 1
+            },
+            "air": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 0.5, "spark": 2, 
+                "beast": 1, "air": 1, "insect": 0.5, "earth": 0, "mind": 1, 
+                "melee": 0.5, "food": 1, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 2, "dark": 1, "poison": 2, "mythic": 1
+            },
+            "insect": {
+                "basic": 1, "fire": 2, "water": 1, "plant": 0.5, "spark": 2, 
+                "beast": 2, "air": 2, "insect": 1, "earth": 0.5, "mind": 1, 
+                "melee": 0.5, "food": 1, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 1, "dark": 0.5, "poison": 1, "mythic": 1
+            },
+            "earth": {
+                "basic": 1, "fire": 0.5, "water": 2, "plant": 2, "spark": 0, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 1, "food": 1, "light": 1, "crystal": 0.5, "metal": 1, 
+                "spirit": 1, "ice": 2, "dark": 1, "poison": 0.5, "mythic": 1
+            },
+            "mind": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 1, "air": 1, "insect": 2, "earth": 1, "mind": 0.5, 
+                "melee": 0.5, "food": 2, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 2, "ice": 1, "dark": 2, "poison": 1, "mythic": 1
+            },
+            "melee": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 0.5, "air": 2, "insect": 0.5, "earth": 1, "mind": 2, 
+                "melee": 1, "food": 1, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 0.5, "dark": 1, "poison": 1, "mythic": 1
+            },
+            "food": {
+                "basic": 1, "fire": 2, "water": 2, "plant": 1, "spark": 0.5, 
+                "beast": 2, "air": 1, "insect": 2, "earth": 1, "mind": 1, 
+                "melee": 1, "food": 1, "light": 0.5, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 1, "dark": 0.5, "poison": 1, "mythic": 1
+            },
+            "light": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 2, "spark": 1, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 1, "food": 1, "light": 0.5, "crystal": 1, "metal": 1, 
+                "spirit": 0, "ice": 1, "dark": 2, "poison": 1, "mythic": 1
+            },
+            "crystal": {
+                "basic": 1, "fire": 0.5, "water": 1, "plant": 1, "spark": 0.5, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 2, "mind": 2, 
+                "melee": 2, "food": 1, "light": 0.5, "crystal": 1, "metal": 2, 
+                "spirit": 0.5, "ice": 1, "dark": 1, "poison": 0, "mythic": 1
+            },
+            "metal": {
+                "basic": 0.5, "fire": 2, "water": 1, "plant": 0.5, "spark": 1, 
+                "beast": 0.5, "air": 0.5, "insect": 0.5, "earth": 2, "mind": 0.5, 
+                "melee": 2, "food": 1, "light": 1, "crystal": 1, "metal": 0.5, 
+                "spirit": 1, "ice": 0.5, "dark": 1, "poison": 0, "mythic": 1
+            },
+            "spirit": {
+                "basic": 0, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 0.5, 
+                "melee": 0, "food": 0.5, "light": 2, "crystal": 2, "metal": 1, 
+                "spirit": 2, "ice": 1, "dark": 2, "poison": 0.5, "mythic": 1
+            },
+            "ice": {
+                "basic": 1, "fire": 2, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 1, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 2, "food": 1, "light": 1, "crystal": 0.5, "metal": 2, 
+                "spirit": 1, "ice": 0.5, "dark": 1, "poison": 1, "mythic": 1
+            },
+            "dark": {
+                "basic": 1, "fire": 1, "water": 1, "plant": 1, "spark": 1, 
+                "beast": 2, "air": 1, "insect": 2, "earth": 1, "mind": 0, 
+                "melee": 1, "food": 1, "light": 2, "crystal": 1, "metal": 1, 
+                "spirit": 0.5, "ice": 1, "dark": 0.5, "poison": 1, "mythic": 1
+            },
+            "poison": {
+                "basic": 1, "fire": 1, "water": 0.5, "plant": 1, "spark": 1, 
+                "beast": 1, "air": 0.5, "insect": 0.5, "earth": 2, "mind": 2, 
+                "melee": 0.5, "food": 1, "light": 1, "crystal": 1, "metal": 1, 
+                "spirit": 1, "ice": 1, "dark": 1, "poison": 0.5, "mythic": 1
+            },
+            "mythic": {
+                "basic": 0.5, "fire": 0.5, "water": 0.5, "plant": 0.5, "spark": 0.5, 
+                "beast": 0.5, "air": 1, "insect": 1, "earth": 1, "mind": 1, 
+                "melee": 1, "food": 1, "light": 2, "crystal": 2, "metal": 1, 
+                "spirit": 1, "ice": 1, "dark": 1, "poison": 1, "mythic": 2
+            }
+        };
 
-    { name: "Abyssent", image: "https://doodle-team-builder.vercel.app/_next/image?url=%2FdoodleImages%2FAbyssent.webp&w=128&q=75" },
-    { name: "Aerystal", image: "https://doodle-team-builder.vercel.app/_next/image?url=%2FdoodleImages%2FAerystal.webp&w=128&q=75" },
-    { name: "Aliantion", image: "https://i.ibb.co/fGVtt9VC/Aliantion-1.webp" },
-    { name: "Aluminja", image: "https://i.ibb.co/tpxnFrs0/Aluminja-1.webp" },
-    { name: "Antenaflight", image: "https://i.ibb.co/chg5DDHT/Antenaflight-1.webp" },
-    { name: "Anubeetle", image: "https://i.ibb.co/zHZWtGLG/Anubeetle-1.webp" },
-    { name: "Arachniak", image: "https://i.ibb.co/rGzxdc10/Arachniak-1.webp" },
-    { name: "Archopos", image: "https://i.ibb.co/cKvQgKqZ/Archopos-1.webp" },
-    { name: "Archopos-A", image: "https://i.ibb.co/tTZYP6LB/A-Archopos-1.webp" },
-    { name: "Armaratus", image: "https://i.ibb.co/jvMyhxRH/Armaratus-Unveiled-1.webp" },
-    { name: "Arthopex", image: "https://i.ibb.co/spyF5Yty/Arthopex-1.webp" },
-    { name: "Artifixie-Base", image: "https://i.ibb.co/NdjXHNsN/Artifixie-1.webp" },
-    { name: "Artifixie-Mech", image: "https://i.ibb.co/wNYbXdLb/Artifixie-MEKA-1.webp" },
-    { name: "Banautalis", image: "https://i.ibb.co/ZpfvDz69/Banautilus-1.webp" },
-    { name: "Bionotic", image: "https://i.ibb.co/rKwnMmQs/Bionotic-1.webp" },
-    { name: "Bionotic-A", image: "https://i.ibb.co/RdsYPBh/A-Bionotic-1.webp" },
-    { name: "Bronzoch", image: "https://i.ibb.co/7ty7w22C/Bronzoch-1.webp" },
-    { name: "Bubbull", image: "https://i.ibb.co/pBj6DYFJ/Bubbull-1.webp" },
-    { name: "Bubbull-A", image: "https://i.ibb.co/5W1hP8y6/A-Bubbull-1.webp" },
-    { name: "Bungo", image: "https://i.ibb.co/4RbPds64/Bungo-Family-1.webp" },
-    { name: "Bunswirl", image: "https://i.ibb.co/r2r7LLxH/Bunswirl-1.webp" },
-    { name: "Cacmeow", image: "https://i.ibb.co/Cs0PgZ1Q/Cacmeow-1.webp" },
-    { name: "Cacmeow-A", image: "https://i.ibb.co/hJnBK6jj/A-Cacmeow-1.webp" },
-    { name: "Calamander", image: "https://i.ibb.co/N6SrKydb/Calamander-1.webp" },
-    { name: "Calamander-A", image: "https://i.ibb.co/Xf2k8WL4/A-Calamander-1.webp" },
-    { name: "Candeigon", image: "https://i.ibb.co/0jcQhbJT/Candeigon-1.webp" },
-    { name: "Carnivower", image: "https://i.ibb.co/PZ4sk1sB/Carnivower-1.webp" },
-    { name: "Celestian", image: "https://i.ibb.co/LdxVfJN8/Celestian-1.webp" },
-    { name: "Cerebopod", image: "https://i.ibb.co/fYf7nDP9/Cerebopod-1.webp" },
-    { name: "Cerebopod-A", image: "https://i.ibb.co/RGJtFjLZ/A-Cerebopod-1.webp" },
-    { name: "Cherugard", image: "https://i.ibb.co/dJKrrF91/Cherugard-1.webp" },
-    { name: "Chimestive", image: "https://i.ibb.co/BH4tZFRj/Chimestive-1.webp" },
-    { name: "Clangutang", image: "https://i.ibb.co/6JgmLsNT/Clangutang-1.webp" },
-    { name: "Corrolizard", image: "https://i.ibb.co/HDYqQHJX/Corrolizard-1.webp" },
-    { name: "Corrolizard-A", image: "https://i.ibb.co/7tgnPM4B/A-Corrolizard-1.webp" },
-    { name: "Cragildae", image: "https://i.ibb.co/KT2Q7KS/Cragildae-1.webp" },
-    { name: "Cragildae-A", image: "https://i.ibb.co/zWTVy9dS/A-Cragildae-1.webp" },
-    { name: "Cryotera", image: "https://i.ibb.co/k2ZdKtrW/Cryotera-1.webp" },
-    { name: "Cryotera-A", image: "https://i.ibb.co/xKQy61rC/A-Cryotera-1.webp" },
-    { name: "Ctholos", image: "https://i.ibb.co/chVmY7PW/Ctholos-1.webp" },
-    { name: "Daeferno", image: "https://i.ibb.co/675zBZZW/Daeferno-1.webp" },
-    { name: "Dameseal", image: "https://i.ibb.co/4ZkjjRDS/Dameseal-1.webp" },
-    { name: "Desdog", image: "https://i.ibb.co/0RDzVQky/Desdog-1.webp" },
-    { name: "Djinneko", image: "https://i.ibb.co/YBpZJJSB/Djinneko-1.webp" },
-    { name: "Drakothread", image: "https://i.ibb.co/1G3mhY2w/Drakothread-1.webp" },
-    { name: "Elefortune", image: "https://i.ibb.co/7dmVRhbh/Elefortune-1.webp" },
-    { name: "Emperoflame", image: "https://i.ibb.co/pVV1mRj/Leoperor-1.webp" },
-    { name: "Endovul", image: "https://i.ibb.co/5g9shVvN/Endovul-1.webp" },
-    { name: "Exoskelis", image: "https://i.ibb.co/TMz19D9q/Exoskelis-1.webp" },
-    { name: "Exovul", image: "https://i.ibb.co/84fkbHxs/Exovul-1.webp" },
-    { name: "Fabulupin", image: "https://i.ibb.co/pjzhKxF5/Fabulupin-1.webp" },
-    { name: "Fancyoon", image: "https://i.ibb.co/gbCzN5LB/Fancyoon-1.webp" },
-    { name: "Feracoalt", image: "https://i.ibb.co/PsSsCrC7/Feracoatl-1.webp" },
-    { name: "Finwick", image: "https://i.ibb.co/bRz7S96Y/Finwick-1.webp" },
-    { name: "Flong", image: "https://i.ibb.co/LbN1vGV/Flong-1.webp" },
-    { name: "Fluppy", image: "https://i.ibb.co/LX4zCZHm/Fluppy-1.webp" },
-    { name: "Frigale", image: "https://i.ibb.co/8Dqqxd0K/Frigale-1.webp" },
-    { name: "Fruitoad", image: "https://i.ibb.co/9mn2YbsT/Fruitoad-1.webp" },
-    { name: "Fummasu", image: "https://i.ibb.co/KzpGzMbq/Fummasu-1.webp" },
-    { name: "Garghoul", image: "https://i.ibb.co/NnNnFjzh/Garghoul-1.webp" },
-    { name: "Gigarlic", image: "https://i.ibb.co/xqVBZFJQ/Gigarlic-1.webp" },
-    { name: "Girasera", image: "https://i.ibb.co/hxBQKwwf/Girasera-1.webp" },
-    { name: "Glacigash", image: "https://i.ibb.co/TdfFpHZ/Glacigash-1.webp" },
-    { name: "Glubbie", image: "https://i.ibb.co/dJbCHMZY/Glubbie-1.webp" },
-    { name: "Gobblegoo", image: "https://i.ibb.co/Q7NhSXRX/Gobblegoo-1.webp" },
-    { name: "Goliage", image: "https://i.ibb.co/q3Hdx1zM/Goliage-1.webp" },
-    { name: "Gomutt", image: "https://i.ibb.co/GLtGk4V/Gomutt-1.webp" },
-    { name: "Gourmesal", image: "https://i.ibb.co/mrZSmCXQ/Gourmesal-1.webp" },
-    { name: "Gowatt", image: "https://i.ibb.co/tw5MF1Gf/Gowatt-1.webp" },
-    { name: "Grimantle", image: "https://i.ibb.co/vvxWTdNr/Grimantle-Cloaked-1.webp" },
-    { name: "Grimantle-Air", image: "https://i.ibb.co/nN78jvh5/Grimantle-Uncloaked-1.webp" },
-    { name: "Groato", image: "https://i.ibb.co/JRMDMxdp/Groato-1.webp" },
-    { name: "Groato-A", image: "https://i.ibb.co/216TTLtC/A-Groato-1.webp" },
-    { name: "Grufflin", image: "https://i.ibb.co/8g9szqn6/Grufflin-1.webp" },
-    { name: "Grufflin-A", image: "https://i.ibb.co/DfC8vzkz/A-Grufflin-1.webp" },
-    { name: "Gyornaw", image: "https://i.ibb.co/KpMV9t2F/Gyornaw-1.webp" },
-    { name: "Hahayena", image: "https://i.ibb.co/8gCVYwt8/Hahayena-1.webp" },
-    { name: "Hangryphus", image: "https://i.ibb.co/fGvjtM8b/Hangryphus-1.webp" },
-    { name: "Hattrix", image: "https://i.ibb.co/Wv9q46v7/Hattrix-1.webp" },
-    { name: "Hattrix-A", image: "https://i.ibb.co/4gDtyB6s/A-Hattrix-1.webp" },
-    { name: "Henchum", image: "https://i.ibb.co/TnZxsTb/Henchum-1.webp" },
-    { name: "Hollihare", image: "https://i.ibb.co/Z67cYDpK/Hollihare-1.webp" },
-    { name: "Horbeast", image: "https://i.ibb.co/b5xXLMkJ/Horbeast-1.webp" },
-    { name: "Humbiscus", image: "https://i.ibb.co/S7ntyndk/Humbiscus-1.webp" },
-    { name: "Hypnotl", image: "https://i.ibb.co/tPc6RBR2/Hypnotl-1.webp" },
-    { name: "Hypnotl-A", image: "https://i.ibb.co/KctgdH1J/A-Hypnotl-1.webp" },
-    { name: "Incinelisk", image: "https://i.ibb.co/TqHKHDWd/Incinelisk-1.webp" },
-    { name: "Infurnius", image: "https://i.ibb.co/5x4hkzmm/Infurnius-1.webp" },
-    { name: "Irikil", image: "https://i.ibb.co/Z4RBv70/Irikil-1.webp" },
-    { name: "Jaelect", image: "https://i.ibb.co/vxwg4vMw/Jaelect-1.webp" },
-    { name: "Jelluminous", image: "https://i.ibb.co/qLt9t83c/Jelluminous-1.webp" },
-    { name: "Jellupy", image: "https://i.ibb.co/TxM2qcrx/Jellupy-1.webp" },
-    { name: "Jestwirl", image: "https://i.ibb.co/kgnrhxVX/Jestwirl-1.webp" },
-    { name: "Jinglark", image: "https://i.ibb.co/VWMBVJmp/Jinglark-1.webp" },
-    { name: "Jinglark-A", image: "https://i.ibb.co/LXV998HS/A-Jinglark-1.webp" },
-    { name: "Junipyro", image: "https://i.ibb.co/xqp2SBWh/Junipyro-1.webp" },
-    { name: "Kelpimer", image: "https://i.ibb.co/Y4W1Mjk6/Kelpimer-1.webp" },
-    { name: "Kibara", image: "https://i.ibb.co/fYt5R6QB/Kibara-1.webp" },
-    { name: "Kidere", image: "https://i.ibb.co/Z6vvwyHj/Kidere-1.webp" },
-    { name: "Klydaskunk", image: "https://i.ibb.co/Ld062NV5/Klydaskunk-1.webp" },
-    { name: "Koriyu", image: "https://i.ibb.co/wNBLqfxt/Koriyu-1.webp" },
-    { name: "Kreindus", image: "https://i.ibb.co/vvv6wcbL/Kreindus-1.webp" },
-    { name: "Lacergen-Base", image: "https://i.ibb.co/Mxs3gYqt/image.png" },
-    { name: "Lacergen-Earth", image: "https://i.ibb.co/rKT4Rmky/Lacergen-Earth-1.webp" },
-    { name: "Lacergen-Fire", image: "https://i.ibb.co/5h8D1FSP/Lacergen-Fire-1.webp" },
-    { name: "Lacergen-Ice", image: "https://i.ibb.co/Q7w3FzgN/Lacergen-Ice-1.webp" },
-    { name: "Lacergen-Spark", image: "https://i.ibb.co/w3HBhnZ/Lacergen-Spark-1.webp" },
-    { name: "Leazar", image: "https://i.ibb.co/nNhhcgdG/Leazar-1.webp" },
-    { name: "Libelagua", image: "https://i.ibb.co/zWft88KD/Libelagua-1.webp" },
-    { name: "Libelagua-A", image: "https://i.ibb.co/Rpx9gcMC/A-Libelagua-1.webp" },
-    { name: "Lilivian", image: "https://i.ibb.co/fV4Hr49K/Lilvian-1.webp" },
-    { name: "Louis", image: "https://i.ibb.co/wZzzG9C4/Louis-1.webp" },
-    { name: "Lumiline", image: "https://i.ibb.co/HT1X7rYZ/Lumiline-1.webp" },
-    { name: "Lumiline-A", image: "https://i.ibb.co/LXFXwBKP/A-Lumiline-1.webp" },
-    { name: "Lurkilid", image: "https://i.ibb.co/V0rRPwk3/Lurkelid-1.webp" },
-    { name: "Maelzuri", image: "https://i.ibb.co/8LdJTbdj/Maelzuri-1.webp" },
-    { name: "Magmotode", image: "https://i.ibb.co/ZzD7JKvq/Magmotode-1.webp" },
-    { name: "Mallemole", image: "https://i.ibb.co/hxSVBDbv/Mallemole-1.webp" },
-    { name: "Malotrick", image: "https://i.ibb.co/mr48hByp/Malotrick-1.webp" },
-    { name: "Malotrick-A", image: "https://i.ibb.co/kf25XV8/A-Malotrick-1.webp" },
-    { name: "Mammolten", image: "https://i.ibb.co/PGHnt9Qw/Mammolten-Erupt-1.webp" },
-    { name: "Mantiscald", image: "https://i.ibb.co/xSC4Lrd3/Mantiscald-1.webp" },
-    { name: "Marigrimm", image: "https://i.ibb.co/KxXS9sCN/Marigrimm-1.webp" },
-    { name: "Maskomedy", image: "https://i.ibb.co/4RD9GfDc/Maskomedy-1.webp" },
-    { name: "Maskomedy-A", image: "https://i.ibb.co/j9MjvpjW/A-Maskomedy-2.webp" },
-    { name: "Mawthra", image: "https://i.ibb.co/gFrVHRGP/Mawthra-1.webp" },
-    { name: "Mawthra-A", image: "https://i.ibb.co/tThbsss0/A-Mawthra-1.webp" },
-    { name: "Medikrow", image: "https://i.ibb.co/d0Fj8BLx/Medikrow-1.webp" },
-    { name: "Megortles", image: "https://i.ibb.co/7Nr2NJSs/Megortles-1.webp" },
-    { name: "Meiolicant", image: "https://i.ibb.co/s97prLxM/Meiolicant-1.webp" },
-    { name: "Meltimaw", image: "https://i.ibb.co/gbCfYmNj/Meltimaw-1.webp" },
-    { name: "Mercenous", image: "https://i.ibb.co/d0TY4gkB/Mercenous-1.webp" },
-    { name: "Mielursa", image: "https://i.ibb.co/wNsh6hbc/Mielursa-1.webp" },
-    { name: "Metalytra", image: "https://i.ibb.co/DH9PxW63/Metalytra-1.webp" },
-    { name: "Mold", image: "https://i.ibb.co/1fFnv8zb/Mold-1.webp" },
-    { name: "Monolugg", image: "https://i.ibb.co/5h5kK6bC/Monolugg-1.webp" },
-    { name: "Montor", image: "https://i.ibb.co/mVS8Z3wV/Montor-1.webp" },
-    { name: "Morphiu-C", image: "https://i.ibb.co/23B07SgR/Morphiu-C-1.webp" },
-    { name: "Morphiu-G", image: "https://i.ibb.co/21XvcBCR/Morphiu-G-1.webp" },
-    { name: "Morphiu-L", image: "https://i.ibb.co/cc0Hv4BY/Morphiu-L-1.webp" },
-    { name: "Morphiu-O", image: "https://i.ibb.co/G6gTChC/Morphiu-O-1.webp" },
-    { name: "Morphiu-T", image: "https://i.ibb.co/PqsS6dD/Morphiu-T-1.webp" },
-    { name: "Moss", image: "https://i.ibb.co/35rdfnLP/Moss-1.webp" },
-    { name: "Mourveil", image: "https://i.ibb.co/0jZfT5hV/Mourveil-1.webp" },
-    { name: "Mourveil-A", image: "https://i.ibb.co/kgVyyFBf/A-Mourveil-1.webp" },
-    { name: "Moyai", image: "https://i.ibb.co/pF0zg6G/Moyai-1.webp" },
-    { name: "Mystifaux", image: "https://i.ibb.co/mVTJBJZS/Mystifaux-1.webp" },
-    { name: "Nepteros", image: "https://i.ibb.co/4w0V7yw4/Nepteros-1.webp" },
-    { name: "Nimbell", image: "https://i.ibb.co/jZWDLDHJ/Nimbell-1.webp" },
-    { name: "Noctoryx", image: "https://i.ibb.co/yBsWFXhg/Noctoryx-1.webp" },
-    { name: "Noxvul", image: "https://i.ibb.co/4ZVgKq1W/Noxvul-1.webp" },
-    { name: "Nyanto", image: "https://i.ibb.co/spmdZfFR/Nyanto-1.webp" },
-    { name: "Nyanto-A", image: "https://i.ibb.co/J0CPgXL/A-Nyanto-1.webp" },
-    { name: "Octonut", image: "https://i.ibb.co/Kxmk598X/Octonut-1.webp" },
-    { name: "Ostigon", image: "https://i.ibb.co/s9ZrC8bN/Ostigon-1.webp" },
-    { name: "Ostigon-A", image: "https://i.ibb.co/HfdQXwfy/A-Ostigon-1.webp" },
-    { name: "Owol", image: "https://i.ibb.co/gLMHWgMR/Owol-1.webp" },
-    { name: "Partybug", image: "https://i.ibb.co/35B2tdn3/Partybug-1.webp" },
-    { name: "Partybug-A", image: "https://i.ibb.co/twhWrjW9/A-Partybug-1.webp" },
-    { name: "Polargeist", image: "https://i.ibb.co/0ptcTmV7/Polargeist-1.webp" },
-    { name: "Pompaboar", image: "https://i.ibb.co/Y48NhZp0/Pompaboar-1.webp" },
-    { name: "Potterfiend", image: "https://i.ibb.co/ymBB33mB/Potterfiend-1.webp" },
-    { name: "Prickles", image: "https://i.ibb.co/tPwVLrjm/Prickles-1.webp" },
-    { name: "Qilintel", image: "https://i.ibb.co/2Yq0Wxpq/Qilintel-1.webp" },
-    { name: "Reliconis", image: "https://i.ibb.co/d41nS4Kw/Reliconis-1.webp" },
-    { name: "Rhinostone", image: "https://i.ibb.co/SDDvcKkb/Rhinostone" },
-    { name: "Ribbotl", image: "https://i.ibb.co/ksc17JXq/Ribbotl-1.webp" },
-    { name: "Riptorvent", image: "https://i.ibb.co/PZ9YbcP6/Riptorvent-1.webp" },
-    { name: "Roadterra", image: "https://i.ibb.co/d0kjLRMQ/Roadterra-1.webp" },
-    { name: "Runewt", image: "https://i.ibb.co/wF702S6r/Runewt-1.webp" },
-    { name: "Scarfox", image: "https://i.ibb.co/WWV8Rkbc/Scarfox-1.webp" },
-    { name: "Scheemeesh", image: "https://i.ibb.co/vCRtgG4N/Schemeesh-1.webp" },
-    { name: "Scorsurge", image: "https://i.ibb.co/dsMvnjxh/Scorsurge-1.webp" },
-    { name: "Seacrion", image: "https://i.ibb.co/tTy8MDX3/Seacrion-1.webp" },
-    { name: "Seamknight", image: "https://i.ibb.co/wZXd9132/Seamknight-Guard-1.webp" },
-    { name: "Seamstress", image: "https://i.ibb.co/DHkMrS4L/Seamstress-Strike-1.webp" },
-    { name: "Serpentsheen", image: "https://i.ibb.co/RGJBrdL1/Serpentsheen-1.webp" },
-    { name: "Serrafin", image: "https://i.ibb.co/Qv2zsB5s/Serrafin-1.webp" },
-    { name: "Skadean", image: "https://i.ibb.co/gFjC44VZ/Skadean-1.webp" },
-    { name: "Skadean-A", image: "https://i.ibb.co/Kj5g4BDz/A-Skadean-1.webp" },
-    { name: "Skervidae", image: "https://i.ibb.co/20HnYgfk/Skervidae-1.webp" },
-    { name: "Skorpiruli", image: "https://i.ibb.co/xS5Dnv2P/Skorpirul-1.webp" },
-    { name: "Snorolla", image: "https://i.ibb.co/xSzcJjNL/Snorolla-1.webp" },
-    { name: "Snowclowne", image: "https://i.ibb.co/KcM8YpGL/Snowclone-1.webp" },
-    { name: "Somberock", image: "https://i.ibb.co/Ly7B8wX/Somberock-1.webp" },
-    { name: "Somberock-A", image: "https://i.ibb.co/6RVTdrLp/A-Somberock-1.webp" },
-    { name: "Spectatik", image: "https://i.ibb.co/svdj84TJ/Spectatik-1.webp" },
-    { name: "Spectatik-a", image: "https://i.ibb.co/Y7MLPzMv/A-Spectatik-1.webp" },
-    { name: "Springling", image: "https://i.ibb.co/zWHPBzc0/Springling-1.webp" },
-    { name: "Spunny", image: "https://i.ibb.co/393wQy0f/Spunny-1.webp" },
-    { name: "Squonk", image: "https://i.ibb.co/rR7PVkQy/Squonk-1.webp" },
-    { name: "Staligant-F", image: "https://i.ibb.co/zV7c8QDP/Staligant-F-1.webp" },
-    { name: "Staligant-M", image: "https://i.ibb.co/kV5Mhccw/Staligant-1.webp" },
-    { name: "Staligant-A", image: "https://i.ibb.co/Qxj5Gh3/A-Staligant-1.webp" },
-    { name: "Sukikogami", image: "https://i.ibb.co/1GWbyNBj/Sukikogami-1.webp" },
-    { name: "Suomous", image: "https://i.ibb.co/ddzbXt6/Suomous-1.webp" },
-    { name: "Suomous-A", image: "https://i.ibb.co/DfSmjHg2/A-Suomous-1.webp" },
-    { name: "Sursablit", image: "https://i.ibb.co/d0xP7yGJ/Sursablit-1.webp" },
-    { name: "Swoptar", image: "https://i.ibb.co/zhtHc4jn/Swoptar-1.webp" },
-    { name: "Taryonix", image: "https://i.ibb.co/nNSHph4p/Taryonix-1.webp" },
-    { name: "Tasmarauder", image: "https://i.ibb.co/sp8RcScC/Tasmarauder-1.webp" },
-    { name: "Terruma", image: "https://i.ibb.co/fGk0f43H/Terruma-1.webp" },
-    { name: "Theaterror", image: "https://i.ibb.co/mrY9NzBV/Theaterror-1.webp" },
-    { name: "Theaterror-A", image: "https://i.ibb.co/XrGnt0N0/A-Theaterror-1.webp" },
-    { name: "Thornet", image: "https://i.ibb.co/TDzcVMzg/Thornet-1.webp" },
-    { name: "Thornet-A", image: "https://i.ibb.co/1Y6HtYMX/A-Thornet-1.webp" },
-    { name: "Toxisui", image: "https://i.ibb.co/39MVcP9Z/Toxisui-1.webp" },
-    { name: "Tsumo", image: "https://i.ibb.co/JWW2cL87/Tsumo-1.webp" },
-    { name: "Tufflaze", image: "https://i.ibb.co/Zpkg0g7f/Tufflaze-1.webp" },
-    { name: "Tufflaze-A", image: "https://i.ibb.co/0VjQ28H1/A-Tufflaze-1.webp" },
-    { name: "Tulenna", image: "https://i.ibb.co/8LJxfypL/Tulenna-1.webp" },
-    { name: "Tulenna-A", image: "https://i.ibb.co/Xk2STDXs/A-Tulenna-1.webp" },
-    { name: "Umaisho", image: "https://i.ibb.co/zhVB1Fj8/Umaisho-1.webp" },
-    { name: "Umaisho-A", image: "https://i.ibb.co/60C56kcL/A-Umaisho-1.webp" },
-    { name: "Velodo", image: "https://i.ibb.co/6J87ZSW7/Velodo-1.webp" },
-    { name: "Vermorph", image: "https://i.ibb.co/PG72sXXd/Vermorph-1.webp" },
-    { name: "Vermorph-A", image: "https://i.ibb.co/QvMzMzjy/A-Vermorph-1.webp" },
-    { name: "Vigimante", image: "https://i.ibb.co/G4kr2d83/Vigimant-1.webp" },
-    { name: "Vigimante-A", image: "https://i.ibb.co/1Gj2nSNy/A-Vigimant-1.webp" },
-    { name: "Voltatoo", image: "https://i.ibb.co/TM549RHq/Voltatoo-1.webp" },
-    { name: "Voltenchant", image: "https://i.ibb.co/WWVCThdy/Voltenchant-1.webp" },
-    { name: "Voltenchant-A", image: "https://i.ibb.co/5XpHsNS2/A-Voltenchant-1.webp" },
-    { name: "Vuliable", image: "https://i.ibb.co/d05SQ4HX/Vuliable-1.webp" },
-    { name: "Werewool", image: "https://i.ibb.co/7tJwsrxH/Werewool-1.webp" },
-    { name: "Wolfreeze", image: "https://i.ibb.co/HDY1VCdg/Wolfreeze-1.webp" },
-    { name: "Wizvil", image: "https://i.ibb.co/Ps1fPMXL/Wizvil-1.webp" },
-    { name: "Wyvernal", image: "https://i.ibb.co/VWgxPsCR/Wyvernal-1.webp" },
-    { name: "Zapoeira", image: "https://i.ibb.co/pjjBsLmj/Zapoeira-1.webp" },
-    { name: "Zerzura", image: "https://i.ibb.co/x8YTpzGZ/Zerzura-1.webp" },
-    { name: "Caramellow", image: "https://i.ibb.co/mVqxRJkP/Caramellow-1.webp" },
-    { name: "Boblop", image: "https://i.ibb.co/gbZBZMpm/Boblop-1.webp" },
-    { name: "Hazination", image: "https://i.ibb.co/Pv1gvf4p/Hazination-1-1.webp" },
-    { name: "Taxideer", image: "https://i.ibb.co/bggNpkVc/Taxideer-1.webp" },
-    { name: "Daffodally", image: "https://i.ibb.co/zWvz7h57/Daffodally-1.webp" },
-    { name: "Incandesect", image: "https://i.ibb.co/fGkKjspV/Incandesect-1.webp" },
-    { name: "Ignisect", image: "https://i.ibb.co/rfF0Tphb/Ignisect-1.webp" },
-    {name: "Breezshy", image: "https://i.ibb.co/vx62848L/2025-04-06-0wn-Kleki-2.png" },
-    {name: "Majestegg", image: "https://i.ibb.co/bjpQ6FWj/Majestegg1.png" },
-    {name: "Omeletrot", image: "https://i.ibb.co/W4BZbzh1/Hornse-no-egg1.png" },
-    {name: "Majestegg-Steed", image: "https://i.ibb.co/tMY3zNtc/Hornse1.png" },
-    {name: "Emoticat", image: "https://i.ibb.co/vxRkzQ23/Emoticat-1.webp" },
-    {name: "Onirijyn", image: "https://i.ibb.co/wZdryY61/Onirijyn1.webp" },
-    {name: "Clavalier", image: "https://i.ibb.co/wrFGzd8m/Latest.png" },
-    {name: "Snowclowne-A", image: "https://i.ibb.co/v60TZCsS/SPOILER-theclowne.png" },
-    {name: "Osman-shi", image: "https://i.ibb.co/JWc6HX4J/Osman-shi-1.webp" },
-    {name: "Stagine", image: "https://i.ibb.co/9HygQwYv/Stagine-1.webp" },
-    {name: "Aurevalis", image: "https://i.ibb.co/Qv1sDy8k/Aurevalis-1.webp" },
-    {name: "Scarrion", image: "https://i.ibb.co/rGq2yNJw/Scarrion-1.webp" },
-];
-
-        
-   
-        const basicMoves = [
-            "Allure", "Armor Break", "Armor Up", "Bark", "Blowup Blast", 
-            "Body Slam", "Boom Boom", "Boring Show", "Calming Melody", 
-            "Careless Assault", "Cauterizing Smash", "Center of Attention", 
-            "Charge", "Chemical Breath", "Claw Swipes", "Climate Shot", 
-            "Coil", "Combo Support", "Crit Up", "Crocodile Tears", 
-            "Cutesy Glare", "Disarm", "Dispose", "Do Nothing", "Entertain", 
-            "Equality", "Focus", "FTL Assault", "Glancing Blow", "Harden", 
-            "Haste", "Headbutt", "Heal", "Hide", "Hop", "Howl", "Hype Up", 
-            "Hyper Scream", "Hyper Voice", "Jolly Dance", "Lick", "Marking Bite", 
-            "Mock Charge", "Multi-Hit", "Multi-Smack", "Panhandle", "Party!", 
-            "Patchwork", "Pirouette", "Preparation", "Protect", "Purl Stitch", 
-            "Quick Strike", "Relief", "Roll", "Sad Zone", "Scapegoat", "Scram", 
-            "Screech", "Shellshock", "Shield Bash", "Slash", "Smack", "Smokescreen", 
-            "Squeak", "Starbreaker", "Subterfuge", "Swagger Dance", "Swipe", 
-            "Tail Smack", "Tourniquet", "Trap", "Tri-Elemental Slash", "Wildcard", 
-            "Wrap", "Yarn Snare","Elemental Claws", "Mood Swing","Final Gambit"
-        ];
-
-
-        const mythicMoves = [
-            "Attack Seal", "Louis Prayer", "Meteor Shower", 
-            "Mythic Blast", "Playtime's Over", "Reverse Singularity", 
-            "The World"
-        ];
-
-  
-        const fireMoves = [
-            "Boil Bomb", "Burning Orb", "Fiery Bite", "Fiery Punch", 
-            "Fiery Slash", "Fireball", "Firebolt", "Firecracker", 
-            "Flame Rattle", "Flame Shield", "Flames of Gehenna", 
-            "Forest Fire", "Foxfire", "Heat Bash", "Inflame", 
-            "Incinerate", "Lava Toss", "Raging Bonfire", "Sizzle", 
-            "Solar Flare", "Soulfire","Pyroclast"
-        ];
-
-
-        const waterMoves = [
-            "Aquagel", "Aqua Cannon", "Bubble Shield", "Capsize", 
-            "Croak", "Fin Slash", "Hydro Burst", "Rainmaker", 
-            "Rapid Current", "Rip Current", "Rust", "Siren Song", 
-            "Storm Heal", "Swamp", "Tainted Water", "Tears of Sorrow", 
-            "The Flood", "Tidal Slam", "Tsunami", "Tsunami Drop", 
-            "Waterbolt", "Wave Shot"
-        ];
-
-
-        const plantMoves = [
-            "1,000 Needles", "Armillaria", "Barb Barrier", 
-            "Barkskin", "Branch Launch", "Compost", 
-            "Entangling Vines", "Floral Fang", "Hemlock Hit", 
-            "Leaf Blade", "Leaf Sap", "Leaf Tornado", 
-            "Life Roots", "Life Sap", "Lilypad Leap", 
-            "Nature's Guardian", "Needle Spike", "Paralysis Spores", 
-            "Parasitic Seeds", "Plant Sap", "Pumpkin Spin", 
-            "Rage Spores", "Sakura Blast", "Seed Assault", 
-            "Slash and Burn", "Sleep Spores", "Thorns of Wrath", 
-            "Thorny Thwack", "Wild Growth", "Gardentend", "Bunny Distraction"
-        ];
-
-
-        const electricMoves = [
-            "Crackling Static", "Electrical Burns", "Electrify", 
-            "Electro Bite", "Electro Punch", "Electro Slash", 
-            "Energized", "Lightning Kicks", "Pylons", 
-            "Quad Strike", "Recharge", "Shock", 
-            "Shock Therapy", "Shock Wave", "Taser", 
-            "Thunder Strike", "Thunderstorm", "Zeppelin Zap","Thunder Drum"
-        ];
-
-
-        const beastMoves = [
-            "Berserk", "Bestial Roar", "Bestial Wrath",
-            "Bite", "Call of the Wild", "Crunch",
-            "Double Bite", "Feral Fury", "Ferocious Onslaught",
-            "Horn Pierce", "Jumble Clobber", "Primal Rage",
-            "Ravenous Rush", "Savage Blow", "Sharp Claws",
-            "Treacherous Gnaw", "War Cry", "Wild Ravage","Commanding Blow"
-        ];
-
-
-        const airMoves = [
-            "Aerial", "Aero Storm", "Air Strike",
-            "Balloon Boost", "Eagle Eye", "Festive Fervor",
-            "Gust", "Hit-n-Run", "Jet Strike",
-            "Nose Dive", "Peck", "Shifting Winds",
-            "Sylphid", "Tempest", "Wind Shear",
-            "Wing Slash"
-        ];
-
-
-        const bugMoves = [
-            "Antenna Beam", "Bee Summon", "Butterfly Effect",
-            "Entomophobia", "Fatal Sting", "Insect Instinct",
-            "Itchy Bite", "Mandible Wound", "Nibble",
-            "Quick Sting", "Serrated Claws", "Skitter",
-            "Swaddle", "Swarm", "Web", "Web Ball"
-        ];
-
-
-        const earthMoves = [
-            "Dirt Lump", "Earth Lance", "Earth Surge",
-            "Earthquake", "Landslide", "Mend",
-            "Mud Spit", "Mud Wave", "Pebble",
-            "Rumbling Charge", "Rusty Roots", "Sandstorm",
-            "Sedimentary Defense", "Shale", "Shatter",
-            "Shell Crash", "Stalactites", "Stampede"
-        ];
-
-
-        const mindMoves = [
-            "Agitate", "Ascending Flow", "Compose",
-            "Enlightenment", "Forced Repetition", "Harmony",
-            "Magical Shield", "Meditation", "Mind Drain",
-            "Mind Empowerment", "Mind Power", "Psychic Ram",
-            "Psycho Crush", "Psychoforce", "Psychokinetic Launch",
-            "Quick Thinking", "Recombobulate", "Rest",
-            "Sleep n' Steal", "Timed Trap", "Trade",
-            "Trait Exchange", "Wide Shield"
-        ];
-
-
-        const meleeMoves = [
-            "Adrenaline", "Body Throw", "Bone Club", "Challenge", "Chi Blast",
-            "Clumsy Swing", "Counter Punch", "Crush", "Daze", "Drill Sergeant",
-            "Energy Wave", "Flurry", "Helicopter Kick", "Life-Ender", "Piercing Poke",
-            "Pummel", "Ready to Fight", "Reckless Charge", "Roundhouse Kick",
-            "Solid Charge", "Swift Hook", "Swift Shield", "Toughen", "Unguarded Strike"
-        ];
-
-
-        const foodMoves = [
-            "Bullet Corn", "Cake Walk", "Chocolate Rain", "Create Jelly", "Devour",
-            "Empty Calories", "Fast Food", "Fatten Up", "Feast", "Food Fight",
-            "Glaze Punch", "Heckie", "Honey Slap", "Just Desserts", "Nutrient Drain",
-            "Pie Gag", "Seasoning", "Snack Chomp", "Spicy Tackle", "Sugar Kiss",
-            "Sugar Rush", "Sweet Aroma", "Takeout","Savory Slam", "Last Course", "Sweet Remains"
-        ];
-
- 
-        const lightMoves = [
-            "Abyss Breaker", "Aurora Flash", "Blinding Lights", "Blessed Blade",
-            "Continuous Sheen", "Divine Light", "Flare", "Flashbang", "Flashing Strike",
-            "Glimmer Wing", "Glow Up", "Hope Beacon", "Laser", "Lightspeed Flurry",
-            "Purge", "Radiant Beam", "Shining Severance", "Light Hook"
-        ];
-
-
-        const crystalMoves = [
-            "Alloy Missiles", "Crystal Armor", "Crystal Arrow", "Crystal Cut",
-            "Crystal Dust", "Crystal Storm", "Crystal Wall", "Diamond Dash",
-            "Flaunt", "Gem Blast", "Geode Smash", "Jewel Jab", "Opal Pulse",
-            "Rupture", "Shard Surge", "Sparkling Finish", "Transcendent Power","Gleamspire"
-        ];
-
-
-        const metalMoves = [
-            "Binary Blitz", "Bonk", "Chain Imprisonment", "Gatling Gifts",
-            "Iron Chomp", "Iron Slash", "Mercury Puddle", "Meteor Launch",
-            "Mineral Cannon", "Precision Dart", "Scissor Guard", "Sharpen",
-            "Stab", "Sword Sweep","Regal Edge","Clampbound","Echo Broadcast"
-        ];
-
-
-        const spiritMoves = [
-            "Befuddlement", "Consume", "Treasure Curse", "Drain Life",
-            "Gleeful Ruse", "Haunt", "Hex", "Hexblade", "Hex Punch",
-            "Incantation", "Intangible", "Jealousy", "Misery Dance",
-            "Murmur", "Necromancy", "Shadow Lurk", "Shadowy Eyes", "Sob",
-            "Spectral Ire", "Spirit Claws", "Spirit Orb", "Vague Vortex",
-            "Whisper", "Phantom Rush","Boo!"
-        ];
-
-  
-        const iceMoves = [
-            "Absolute Zero", "Arctic Blitz", "Bowling Strike", "Chilling Chorus",
-            "Cone Cannon", "Cone of Cold", "Flash Freeze", "Frostbite", "Frostgrip",
-            "Glacial Cleave", "Ice Prison", "Icefall", "Icy Bite", "Icy Floor",
-            "Icy Punch", "Icy Slash", "Icy Veil", "Piercing Ice", "Quick Ice",
-            "Royal Ice", "Snap Freeze", "Snow Fort", "Snow Roller", "Snowball",
-            "Subzero Blizzard"
-        ];
-
-  
-        const darkMoves = [
-            "Ambush", "Chaotic Bolt", "Choke", "Cold Glance", "Dark Blast",
-            "Dark Slash", "Darkness Expansion", "Expectorate", "Frenzied Darkness",
-            "Hiss", "Insult", "Mutiny", "Night Night", "Pickpocket", "Pure Fear",
-            "Pursuit", "Retribution", "Revitalize", "Scrutinize", "Shadowbolt",
-            "Shadowstep", "Siphon Soul", "Sonata of Darkness", "Taunt",
-            "Vampiric Strike", "Worthwhile Sacrifice"
-        ];
-
-
-        const poisonMoves = [
-            "Acid Rain", "Bad Odor", "Belch", "Chemical Cleave", "Food Poisoning",
-            "Foreign Substance", "Goo Blast", "Infection", "Lingering Poison",
-            "Poison Gas", "Poison Ivy", "Poison Punch", "Poison Spores",
-            "Sulfur Plume", "Surprise!", "Toxic Bomb", "Venom Bite",
-            "Venom Lacerate", "Venomous Sting", "Canister","Last Lament"
-        ];
-
-        
-          const helmets = [
-            "None",
-            "Artificer's Beanie",
-            "Aviator Helmet",
-            "Bowlcut",
-            "Candy Headphones",
-            "Decorated Hairclip",
-            "Doodad",
-            "Drenched Sunhat",
-            "Eggshell Helmet",
-            "Epic Shades",
-            "Feathered Hat",
-            "Glummish Cap",
-            "Head Leaf",
-            "Horned Headband",
-            "Magnificent Tophat",
-            "Marshmellow Fedora",
-            "Pale Sunbonnet",
-            "Scuba Goggles",
-            "Smoldering Hood",
-            "Theatre Mask",
-            "Tinfoil Hat"
-        ];
-        
-        const amulets = [
-            "None",
-            "Crystal Shard",
-            "DIY Pin",
-            "Dark Brooch",
-            "Dusty Bandana",
-            "Festive Bow",
-            "Geode Pendant",
-            "Helpful Lantern",
-            "Juniper Necklace",
-            "Mini Camera",
-            "Ornate Necklace",
-            "Rock Candy",
-            "Ruby Pendant",
-            "Sandstone Necklace",
-            "Sapphire Amulet",
-            "Scrap Paper",
-            "Sticky Pendant",
-            "Stone Necklace",
-            "Swag Juice",
-            "Toxic Vial",
-            "Vial of Tears",
-            "Whatchamacallit"
-        ];
-        
-        const artifacts = [
-            "None",
-            "Amber Trapped Fly",
-            "Beach Ball",
-            "Broken Clay",
-            "Chewed Up Bone",
-            "Coal",
-            "Computer Mouse",
-            "Crumpled Water Bottle",
-            "Decorative Katana",
-            "Faunsprout Tail",
-            "Fluffy Feather",
-            "Golden Stick",
-            "Luminous Orb",
-            "Oakwood Staff",
-            "Pizza Slice",
-            "Potted Cactus",
-            "Pure Tear",
-            "Sad Pebblett",
-            "Scone",
-            "Scrapped Cardboard",
-            "Stick",
-            "Thingamajig",
-            "Tombstone",
-            "White Chocolate"
-        ];
-        
-        const stats = [
-            "+10% Health", "+10% Attack", "+10% Defense",
-            "+10% Magic Attack", "+10% Magic Defense", "+10% Speed"
-        ];
-
-        const heldItems = [
-            "None",
-            "Acid Storm in a Bottle",
-            "Air Candy Cube",
-            "Air Taffy",
-            "Arid Wand",
-            "Basic Candy Cube",
-            "Basic Taffy",
-            "Battery",
-            "Beast Candy Cube",
-            "Beast Taffy",
-            "Blueprint",
-            "Bubblegum",
-            "Bubble Wand",
-            "Champion Belt",
-            "Conductor's Baton",
-            "Confectioner's Wand",
-            "Corrosive Wand",
-            "Crooked Talon",
-            "Crystal Candy Cube",
-            "Crystal Taffy",
-            "Cure Jelly",
-            "Cursed Cloak",
-            "Dark Candy Cube",
-            "Dark Chocolate",
-            "Dark Taffy",
-            "Decorative Fan",
-            "Defensive Jelly",
-            "Delicate Wing",
-            "Determination Jelly",
-            "Determination Headband",
-            "Earth Candy Cube",
-            "Earth Data",
-            "Earth Taffy",
-            "Empowered Ring",
-            "Enchanted Emerald",
-            "Enchanted Ruby",
-            "Enchanted Sapphire",
-            "Fire Candy Cube",
-            "Fire Data",
-            "Fire Taffy",
-            "Food Candy Cube",
-            "Food Taffy",
-            "Friendship Ribbon",
-            "Frozen TV Dinner",
-            "Gauze Wrap",
-            "Glasses",
-            "Grease",
-            "Heal Jelly",
-            "Homemade Plush",
-            "Ice Candy Cube",
-            "Ice Data",
-            "Ice Pack",
-            "Ice Taffy",
-            "Imbued Relic",
-            "Insect Candy Cube",
-            "Insect Taffy",
-            "Jetpack",
-            "Laminate",
-            "Lethal Ornament",
-            "Lighter",
-            "Light Candy Cube",
-            "Light Taffy",
-            "Lucky Pebble",
-            "Magical Jelly",
-            "Magic Wand",
-            "Matchbox",
-            "Melee Candy Cube",
-            "Melee Taffy",
-            "Metal Candy Cube",
-            "Metal Taffy",
-            "Mind Candy Cube",
-            "Mind Taffy",
-            "Moon Charm",
-            "Mythic Candy Cube",
-            "Mythic Taffy",
-            "Perfect Alloy",
-            "Plant Candy Cube",
-            "Plant Taffy",
-            "Poison Candy Cube",
-            "Poison Taffy",
-            "Power Jelly",
-            "Pretty Seashell",
-            "Questionable Sludge",
-            "Refined Crystal",
-            "Refractive Prism",
-            "Riot Shield",
-            "Running Shoes",
-            "Sickly Doze",
-            "Sponge",
-            "Small Sprout",
-            "Sniper Scope",
-            "Spark Candy Cube",
-            "Spark Data",
-            "Spark Taffy",
-            "Speed Jelly",
-            "Spirit Candy Cube",
-            "Spirit Jar",
-            "Spirit Taffy",
-            "Starry Glasses",
-            "Stormy Wand",
-            "Strength Jelly",
-            "Studded Fang",
-            "Spiky Thorns",
-"Soothing Charm",
-            "Unwashed Plushie",
-            "Used Crayons",
-            "Used Timber",
-            "Wake-Up Jelly",
-            "Water Candy Cube",
-            "Water Taffy",
-            "Wierd Jelly",
-
-"Hypnotl's Antigen",
-"Calamander's Candy",
-"Umaisho Matcha",
-"Ostigon Collar",
-"Vermorph Goggles",
-"Jinglark Present",
-"Mawthra Rune",
-"Thornet Rune",
-"Tufflaze Rune",
-"Voltenchant Rune",
-"Theaterror Rune",
-"Maskomedy Rune",
-"Mourveil Rune",
-"Malotrick Rune",
-"Tulenna Rune",
-"Staligant Rune",
-"Corrolizard Rune",
-"Staligant Rune",
-"Grufflin Rune",
-"Skadean Rune",
-"Partybug Rune",
-"Somberock Rune",
-"Nyanto Rune",
-"Suomous Rune",
-"Daeferno Rune",
-"Vigimante Rune",
-"Groato Rune",
-"Lumiline Rune",
-"Cacmeow Rune",
-"Cryotera Rune",
-"Spectatik Rune",
-"Bionotic Rune",
-"Archopos Rune",
-"Cerebopod Rune",
-"Hattrix Rune",
-"Cragildae Rune",
-"Bubbul Rune",
-            "Snowclowne Silly Cone",
-"Onion","Ruler","Doomflower","Potassium Conduit"
-
-
-        ];
-        
-
+        const allTypes = Object.keys(typeChart);
         const traits = [
-            "Absorber", "Accelerate", "Acid Advance", "Adaptive", "Adipose",
-            "Air Current", "Alacrity", "Almagest", "Aloe Vera", "Ambrosia",
-            "Amp It Up", "Analytical", "Annihilation", "Annoying Insect", "Anti-Paralysis",
-            "Antivenom", "Apathetic", "Apex", "Apparition", "Archmage",
-            "Arid", "Arsonist", "Avenger", "Balloon Pop", "Banana Peel",
-            "Bandit", "Barkenstein", "Basic Care", "Battery Charge", "Bee Arena",
-            "Berry Good", "Bird of Prey", "Blinding Rocks", "Bludgeon", "Bogdown",
-            "Bon Appetit", "Botulism", "Brainwash", "Bright Lights", "Bubble Blaster",
-            "Bug Zapper", "Bulwark", "Burning Beast", "Burning Body", "Bypass",
-            "Caliginous", "Calm", "Caloric Deficit", "Capoeira", "Capricious",
-            "Cardinal Sins", "Careless", "Chanting", "Chef", "Chemical Explosion",
-            "Chivalry", "Chlorobite", "Chlorokinesis", "Chocolate Drizzle", "Clearcut Ore",
-            "Combustion", "Composed", "Concentrated", "Conductor", "Confidence",
-            "Contagion", "Corrosion", "Courteous", "Covetous", "Cracked",
-            "Crispy", "Crowd Support", "Crude", "Crystalline", "Crystallization",
-            "Daring Devil", "Dauntless", "Decay", "Deepfreeze", "Delicate",
-            "Desert Body", "Destructive Anger", "Deterrant Sabre", "Detox", "Dimwitted",
-            "Direct Combatant", "Doll Eyes", "Discover", "Divine Beast", "Downpour",
-            "Duel", "Durable", "Dust Dash", "Dust Storm", "Edible Treat",
-            "Efficient Proxy", "Electrocute", "Elegance", "Elemental Resist", "Enfeeble",
-            "Entangle", "Entertainer", "Envy", "Eruption", "Escapist",
-            "Ethereal", "Evasive", "Everlasting", "Evil Glare", "Exoskeleton",
-            "Extinguisher", "Ferocity", "Filament", "Fire Up", "Fireproof Armor",
-            "Firestarter", "Firewall", "First Degree Burns", "Fish Outta Water", "Floaty",
-            "Foam Guard", "Forbidden Knowledge", "Fortified", "Four Eyes", "Fur Coat",
-            "Galvanize", "Gaseous Form", "Gauze", "Gift Giver", "Gloomy",
-            "Glutton", "Goliath", "Graceful", "Grass Cloak", "Guardian",
-            "Guilt", "Gunk Spark", "Hammer Claw", "Hammer Time", "Hard Candy",
-            "Hardy", "Harlequin", "Hawkeye", "Healthy Toxins", "Heavy Storms",
-            "Helios", "Herbivore", "Hidden Strength", "High Value Target", "Hiruddtherapy",
-            "Holy Water", "Hunter", "Hydration", "Hypothermia", "Ice Stream",
-            "Ignorant", "Illogical", "Incandescent", "Insatiable Greed", "Iron Will",
-            "Jab Cross", "Jelly Enhancer", "Jelly Lover", "Jester Privilege", "Joltant",
-            "Kaleidoscope", "Karna", "Kindling", "Leech", "Levitate",
-            "Light Orb", "Lightfooted", "Lipid Scale", "Lithe", "Luminosity",
-            "Magician", "Mark Territory", "Melting Point", "Menacing Snarl", "Mental Depletion",
-            "Mental Momentum", "Merciless", "Mimic", "Mind Control", "Mind Games",
-            "Misery Guard", "Molt", "Moratorium", "Mushboom", "Mushroom Maneuver",
-            "Naughty List", "Night Harbinger", "Nihil", "Nimble", "Nimbostratus",
-            "Nitelite", "Nonchalant", "Nullify", "Oasis Deity", "Oil Spill",
-            "Opportunist", "Outboxer", "Overbite", "Overwhelm", "Owolspeed",
-            "Paper Cut", "Paralyzing Agent", "Parry", "Pecking Order", "Poison Absorb",
-            "Poison Precipitation", "Poisonous Skin", "Pollen Armor", "Possession", "Precise",
-            "Premonition", "Proboscis", "Pugilist", "Puncture", "Puppeteer",
-            "Rain Power", "Ramming Speed", "Rapier", "Razor Skin", "Reactive Shock",
-            "Reaper", "Reflective", "Reformation", "Refresh", "Refreshed",
-            "Rejuvenator", "Relentless", "Resentment", "Resilience", "Restless",
-            "Retaliate", "Revenant", "Revival", "Robust", "Routine",
-            "Royal Decree", "Rubber Tissue", "Rugged", "Rule of Cool", "Rush",
-            "Sand Screen", "Sand Shield", "Sand Surge", "Sand Swap", "Savage",
-            "Scarf Down", "Scavenge", "Scorch", "Sea Goddess Disciple", "Second Mind",
-            "Secret Darkness", "Seed Defense", "Serenade", "Sharp Fangs", "Sharp Reflexes",
-            "Sickly Sweet", "Silly", "Skyborn", "Slash Expert", "Snailspeed",
-            "Soul Fortification", "Soul Link", "Speedy Recovery", "Speed of Swag", "Spell Shield",
-            "Spellcaster", "Spiteful", "Splintered Shards", "Split", "Spooky",
-            "Spool", "Stabby Stabby", "Static Charge", "Steam Guard", "Sticky",
-            "Stinky", "Stitching", "Stonefaced", "Storm Surge", "Stormwater",
-            "Strong Armor", "Sugar Coating", "Superluminal", "Symbiosis", "Tainted",
-            "Tangled", "Tar Body", "Tenacious", "The Flock", "The Fungus",
-            "Thievery", "Thermal Energy", "Time Paralysis", "Time Stop", "Titanium Bucket",
-            "Toxicity", "Trait", "Trick or Treat", "Trickster", "True Power",
-            "Trump Card", "Tumble", "Turbulent", "Ugly", "Unbreakable",
-            "Unraveling", "Vampire", "Vengeance", "Vicious", "Vigor",
-            "Virulent Venom", "Viscosity", "Vitality", "Vocalist", "Ward",
-            "Warden", "Water Absorb", "Whimsical", "Wish For Experience", "Wish For Power",
-            "Wish For Wealth", "Your Meowjesty", "Impale", "Florist", "Phasmophobia", "Poison Sustenance",
-            "Pollon Spread","Monarch","Sovereign","To Arms!","Kingly Aura","Unpredictable", "Last Laugh", "Impersonate","Static Purge","Thunder Gut","Overcharge","Hydro Coating","Iron Pincer","Frostillery", "Steeped Spirit",
-            "Reheat","Signal Jammer","Overgrowth Protocol","Paragon Skin","Flourish","Last Lament"
+            "None", "Absorber-Basic", "Absorber-Earth", "Absorber-Ice", "Absorber-Spark",
+            "Apex", "Arid", "Bright Lights", "Caliginous", "Chlorokinesis", "Conductor",
+            "Divine Beast", "Filament", "Fire Up", "Fireproof Armour", "Hard Candy",
+            "Herbivore", "Karna", "Levitate", "Melting Point", "Mushboom", "Nitelite",
+            "Puffball", "Resilience", "Skyborn", "Spiteful", "Stormwater", "Tumble",
+            "Unbreakable", "Water Absorb"
         ];
 
+        const teamContainer = document.getElementById('team-container');
 
-        function createDoodleCard(index) {
-            const card = document.createElement("div");
-            card.classList.add("doodle-card");
-
-            const clearBtn = document.createElement("button");
-            clearBtn.classList.add("clear-btn");
-            clearBtn.textContent = "Clear";
-            clearBtn.onclick = () => {
-                card.querySelector("select").value = "";
-                const doodleImage = card.querySelector(".doodle-image");
-                doodleImage.style.backgroundImage = "";
-                doodleImage.textContent = "Doodle";
+        for (let i = 1; i <= 6; i++) {
+            const doodleBox = document.createElement('div');
+            doodleBox.className = 'doodle-box';
+            doodleBox.innerHTML = `
+                <h3>Doodle ${i}</h3>
+                <div class="type-select-container">
+                    <select class="type-select primary-type" data-doodle="${i}">
+                        <option value="">Primary Type</option>
+                        ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+                    </select>
+                    <select class="type-select secondary-type" data-doodle="${i}">
+                        <option value="">Secondary Type</option>
+                        ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+                    </select>
+                    <select class="type-select trait" data-doodle="${i}">
+                        <option value="">Trait</option>
+                        ${traits.map(trait => `<option value="${trait}">${trait}</option>`).join('')}
+                    </select>
+                </div>
                 
-                card.querySelectorAll(".moves-container select").forEach(select => {
-                    select.value = "";
-                    select.classList.remove(
-                        'mythic-selected', 'fire-selected', 'water-selected', 
-                        'plant-selected', 'electric-selected', 'beast-selected',
-                        'air-selected', 'bug-selected', 'earth-selected', 'mind-selected',
-                        'melee-selected', 'food-selected', 'light-selected',
-                        'crystal-selected', 'metal-selected', 'spirit-selected',
-                        'ice-selected', 'dark-selected', 'poison-selected'
-                    );
-                });
+                <div class="result-title">Weaknesses:</div>
+                <div class="result-list weaknesses" data-doodle="${i}"><span class="none">None</span></div>
                 
-                card.querySelector(".trait-select").value = "";
-                card.querySelector(".held-item-select").value = "";
+                <div class="result-title">Resistances:</div>
+                <div class="result-list resistances" data-doodle="${i}"><span class="none">None</span></div>
                 
-                card.querySelectorAll(".stat-select").forEach(select => {
-                    select.value = "";
-                });
-                
-                card.querySelector(".helmet-select").value = "None";
-                card.querySelector(".amulet-select").value = "None";
-                card.querySelector(".artifact-select").value = "None";
-            };
-            card.appendChild(clearBtn);
-
-            const doodleImage = document.createElement("div");
-            doodleImage.classList.add("doodle-image");
-            doodleImage.textContent = "Doodle";
-
-            const doodleContainer = document.createElement("div");
-            doodleContainer.classList.add("search-container");
-            
-            const selectDoodle = document.createElement("select");
-            selectDoodle.innerHTML = '<option value="">Select Doodle</option>' + 
-                doodles.map(d => `<option value="${d.name}" data-image="${d.image}">${d.name}</option>`).join("");
-            
-            const doodleSearch = document.createElement("input");
-            doodleSearch.classList.add("search-input");
-            doodleSearch.setAttribute("placeholder", "Search doodles...");
-            
-            doodleSearch.addEventListener("input", function() {
-                const searchTerm = this.value.toLowerCase();
-                const options = selectDoodle.options;
-                
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    const text = option.text.toLowerCase();
-                    option.style.display = text.includes(searchTerm) ? "" : "none";
-                }
-            });
-            
-            selectDoodle.addEventListener("focus", function() {
-                doodleSearch.style.display = "block";
-            });
-            
-            selectDoodle.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== doodleSearch) {
-                        doodleSearch.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            doodleSearch.addEventListener("focus", function() {
-                this.style.display = "block";
-            });
-            
-            doodleSearch.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== selectDoodle) {
-                        this.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            doodleContainer.appendChild(selectDoodle);
-            doodleContainer.appendChild(doodleSearch);
-
-            selectDoodle.addEventListener("change", function() {
-                const selectedOption = selectDoodle.options[selectDoodle.selectedIndex];
-                if (selectedOption.dataset.image) {
-                    doodleImage.style.backgroundImage = `url(${selectedOption.dataset.image})`;
-                    doodleImage.textContent = "";
-                } else {
-                    doodleImage.style.backgroundImage = "";
-                    doodleImage.textContent = "Doodle";
-                }
-            });
-
-            const expandButton = document.createElement("button");
-            expandButton.textContent = "Expand";
-            expandButton.onclick = () => {
-                expandSection.style.display = expandSection.style.display === "none" ? "block" : "none";
-            };
-
-            const expandSection = document.createElement("div");
-            expandSection.classList.add("expand-section");
-
-            const movesContainer = document.createElement("div");
-            movesContainer.classList.add("moves-container");
-
-            for (let i = 0; i < 4; i++) {
-                const moveSelect = document.createElement("select");
-                moveSelect.style.width = "48%"; 
-                moveSelect.innerHTML = 
-                    '<option value="">Select Move</option>' +
-                    basicMoves.map(m => `<option value="${m}">${m}</option>`).join("") +
-                    mythicMoves.map(m => `<option value="${m}" class="mythic">${m}</option>`).join("") +
-                    fireMoves.map(m => `<option value="${m}" class="fire">${m}</option>`).join("") +
-                    waterMoves.map(m => `<option value="${m}" class="water">${m}</option>`).join("") +
-                    plantMoves.map(m => `<option value="${m}" class="plant">${m}</option>`).join("") +
-                    electricMoves.map(m => `<option value="${m}" class="electric">${m}</option>`).join("") +
-                    beastMoves.map(m => `<option value="${m}" class="beast">${m}</option>`).join("") +
-                    airMoves.map(m => `<option value="${m}" class="air">${m}</option>`).join("") +
-                    bugMoves.map(m => `<option value="${m}" class="bug">${m}</option>`).join("") +
-                    earthMoves.map(m => `<option value="${m}" class="earth">${m}</option>`).join("") +
-                    mindMoves.map(m => `<option value="${m}" class="mind">${m}</option>`).join("") +
-                    meleeMoves.map(m => `<option value="${m}" class="melee">${m}</option>`).join("") +
-                    foodMoves.map(m => `<option value="${m}" class="food">${m}</option>`).join("") +
-                    lightMoves.map(m => `<option value="${m}" class="light">${m}</option>`).join("") +
-                    crystalMoves.map(m => `<option value="${m}" class="crystal">${m}</option>`).join("") +
-                    metalMoves.map(m => `<option value="${m}" class="metal">${m}</option>`).join("") +
-                    spiritMoves.map(m => `<option value="${m}" class="spirit">${m}</option>`).join("") +
-                    iceMoves.map(m => `<option value="${m}" class="ice">${m}</option>`).join("") +
-                    darkMoves.map(m => `<option value="${m}" class="dark">${m}</option>`).join("") +
-                    poisonMoves.map(m => `<option value="${m}" class="poison">${m}</option>`).join("");
-
-                moveSelect.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-                    this.classList.remove(
-                        'mythic-selected', 'fire-selected', 'water-selected',
-                        'plant-selected', 'electric-selected', 'beast-selected',
-                        'air-selected', 'bug-selected', 'earth-selected', 'mind-selected',
-                        'melee-selected', 'food-selected', 'light-selected',
-                        'crystal-selected', 'metal-selected', 'spirit-selected',
-                        'ice-selected', 'dark-selected', 'poison-selected'
-                    );
-                    
-                    if (selectedOption.classList.contains('mythic')) {
-                        this.classList.add('mythic-selected');
-                    } else if (selectedOption.classList.contains('fire')) {
-                        this.classList.add('fire-selected');
-                    } else if (selectedOption.classList.contains('water')) {
-                        this.classList.add('water-selected');
-                    } else if (selectedOption.classList.contains('plant')) {
-                        this.classList.add('plant-selected');
-                    } else if (selectedOption.classList.contains('electric')) {
-                        this.classList.add('electric-selected');
-                    } else if (selectedOption.classList.contains('beast')) {
-                        this.classList.add('beast-selected');
-                    } else if (selectedOption.classList.contains('air')) {
-                        this.classList.add('air-selected');
-                    } else if (selectedOption.classList.contains('bug')) {
-                        this.classList.add('bug-selected');
-                    } else if (selectedOption.classList.contains('earth')) {
-                        this.classList.add('earth-selected');
-                    } else if (selectedOption.classList.contains('mind')) {
-                        this.classList.add('mind-selected');
-                    } else if (selectedOption.classList.contains('melee')) {
-                        this.classList.add('melee-selected');
-                    } else if (selectedOption.classList.contains('food')) {
-                        this.classList.add('food-selected');
-                    } else if (selectedOption.classList.contains('light')) {
-                        this.classList.add('light-selected');
-                    } else if (selectedOption.classList.contains('crystal')) {
-                        this.classList.add('crystal-selected');
-                    } else if (selectedOption.classList.contains('metal')) {
-                        this.classList.add('metal-selected');
-                    } else if (selectedOption.classList.contains('spirit')) {
-                        this.classList.add('spirit-selected');
-                    } else if (selectedOption.classList.contains('ice')) {
-                        this.classList.add('ice-selected');
-                    } else if (selectedOption.classList.contains('dark')) {
-                        this.classList.add('dark-selected');
-                    } else if (selectedOption.classList.contains('poison')) {
-                        this.classList.add('poison-selected');
-                    }
-                });
-
-                movesContainer.appendChild(moveSelect);
-            }
-
-            const traitContainer = document.createElement("div");
-            traitContainer.classList.add("search-container");
-            
-            const traitSelect = document.createElement("select");
-            traitSelect.classList.add("trait-select");
-            traitSelect.innerHTML = '<option value="">Select Trait</option>' +
-                traits.map(t => `<option value="${t}">${t}</option>`).join("");
-            
-            const traitSearch = document.createElement("input");
-            traitSearch.classList.add("search-input");
-            traitSearch.setAttribute("placeholder", "Search traits...");
-            
-            traitSearch.addEventListener("input", function() {
-                const searchTerm = this.value.toLowerCase();
-                const options = traitSelect.options;
-                
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    const text = option.text.toLowerCase();
-                    option.style.display = text.includes(searchTerm) ? "" : "none";
-                }
-            });
-            
-            traitSelect.addEventListener("focus", function() {
-                traitSearch.style.display = "block";
-            });
-            
-            traitSelect.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== traitSearch) {
-                        traitSearch.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            traitSearch.addEventListener("focus", function() {
-                this.style.display = "block";
-            });
-            
-            traitSearch.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== traitSelect) {
-                        this.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            traitContainer.appendChild(traitSelect);
-            traitContainer.appendChild(traitSearch);
-
-            const heldItemContainer = document.createElement("div");
-            heldItemContainer.classList.add("search-container");
-            
-            const heldItemSelect = document.createElement("select");
-            heldItemSelect.classList.add("held-item-select");
-            heldItemSelect.innerHTML = '<option value="">Held Item</option>' +
-                heldItems.map(h => `<option value="${h}">${h}</option>`).join("");
-            
-            const heldItemSearch = document.createElement("input");
-            heldItemSearch.classList.add("search-input");
-            heldItemSearch.setAttribute("placeholder", "Search items...");
-            
-            heldItemSearch.addEventListener("input", function() {
-                const searchTerm = this.value.toLowerCase();
-                const options = heldItemSelect.options;
-                
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    const text = option.text.toLowerCase();
-                    option.style.display = text.includes(searchTerm) ? "" : "none";
-                }
-            });
-            
-            heldItemSelect.addEventListener("focus", function() {
-                heldItemSearch.style.display = "block";
-            });
-            
-            heldItemSelect.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== heldItemSearch) {
-                        heldItemSearch.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            heldItemSearch.addEventListener("focus", function() {
-                this.style.display = "block";
-            });
-            
-            heldItemSearch.addEventListener("blur", function() {
-                setTimeout(() => {
-                    if (document.activeElement !== heldItemSelect) {
-                        this.style.display = "none";
-                    }
-                }, 200);
-            });
-            
-            heldItemContainer.appendChild(heldItemSelect);
-            heldItemContainer.appendChild(heldItemSearch);
-
-            const statSelect1 = document.createElement("select");
-            statSelect1.classList.add("stat-select");
-            statSelect1.innerHTML = '<option value="">Select Stat</option>' +
-                stats.map(s => `<option value="${s}">${s}</option>`).join("");
-
-            const statSelect2 = document.createElement("select");
-            statSelect2.classList.add("stat-select");
-            statSelect2.innerHTML = '<option value="">Select Stat</option>' +
-                stats.map(s => `<option value="${s}">${s}</option>`).join("");
-
-            const equipmentContainer = document.createElement("div");
-            equipmentContainer.classList.add("equipment-container");
-            
-            const helmetSelect = document.createElement("select");
-            helmetSelect.classList.add("helmet-select");
-            helmetSelect.innerHTML = '<option value="None">Helmet</option>' +
-                helmets.map(h => `<option value="${h}">${h}</option>`).join("");
-            
-            const amuletSelect = document.createElement("select");
-            amuletSelect.classList.add("amulet-select");
-            amuletSelect.innerHTML = '<option value="None">Amulet</option>' +
-                amulets.map(a => `<option value="${a}">${a}</option>`).join("");
-            
-            const artifactSelect = document.createElement("select");
-            artifactSelect.classList.add("artifact-select");
-            artifactSelect.innerHTML = '<option value="None">Artifact</option>' +
-                artifacts.map(a => `<option value="${a}">${a}</option>`).join("");
-            
-            equipmentContainer.appendChild(helmetSelect);
-            equipmentContainer.appendChild(amuletSelect);
-            equipmentContainer.appendChild(artifactSelect);
-
-            expandSection.appendChild(movesContainer);
-            expandSection.appendChild(traitContainer);
-            expandSection.appendChild(heldItemContainer);
-            expandSection.appendChild(statSelect1);
-            expandSection.appendChild(statSelect2);
-            expandSection.appendChild(equipmentContainer);
-
-            card.appendChild(doodleImage);
-            card.appendChild(doodleContainer);
-            card.appendChild(expandButton);
-            card.appendChild(expandSection);
-            return card;
+                <div class="result-title">Immunities:</div>
+                <div class="result-list immunities" data-doodle="${i}"><span class="none">None</span></div>
+            `;
+            teamContainer.appendChild(doodleBox);
         }
 
-        function initializeTeam() {
-            const teamContainer = document.getElementById("team-container");
-            for (let i = 0; i < 6; i++) {
-                teamContainer.appendChild(createDoodleCard(i));
+        document.querySelectorAll('.type-select').forEach(select => {
+            select.addEventListener('change', updateTypeCoverage);
+        });
+
+        function updateTypeCoverage() {
+            const doodleIndex = this.getAttribute('data-doodle');
+            const primaryType = document.querySelector(`.primary-type[data-doodle="${doodleIndex}"]`).value;
+            const secondaryType = document.querySelector(`.secondary-type[data-doodle="${doodleIndex}"]`).value;
+            const trait = document.querySelector(`.trait[data-doodle="${doodleIndex}"]`).value;
+
+            if (!primaryType) {
+                document.querySelector(`.weaknesses[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                document.querySelector(`.resistances[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                document.querySelector(`.immunities[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                updateTeamSummary();
+                return;
             }
+
+            const weaknesses = calculateWeaknesses(primaryType, secondaryType, trait);
+            const resistances = calculateResistances(primaryType, secondaryType, trait);
+            const immunities = calculateImmunities(primaryType, secondaryType, trait);
+
+            updateResultList(`.weaknesses[data-doodle="${doodleIndex}"]`, weaknesses, 'weakness');
+            updateResultList(`.resistances[data-doodle="${doodleIndex}"]`, resistances, 'resist');
+            updateResultList(`.immunities[data-doodle="${doodleIndex}"]`, immunities);
+
+            updateTeamSummary();
         }
 
-        function copyTeamCode() {
-            try {
-                const teamData = Array.from(document.querySelectorAll(".doodle-card")).map(card => {
-                    const moves = Array.from(card.querySelectorAll(".moves-container select")).map(s => s.value);
-                    const stats = Array.from(card.querySelectorAll(".stat-select")).map(s => s.value);
-                    
-                    return {
-                        doodle: card.querySelector("select").value,
-                        moves: moves,
-                        trait: card.querySelector(".trait-select")?.value || "",
-                        heldItem: card.querySelector(".held-item-select")?.value || "",
-                        stats: stats,
-                        equipment: {
-                            helmet: card.querySelector(".helmet-select")?.value || "None",
-                            amulet: card.querySelector(".amulet-select")?.value || "None",
-                            artifact: card.querySelector(".artifact-select")?.value || "None"
+        function applyTraitEffects(primary, secondary, trait, attackingType, effectiveness) {
+            if (trait === "None") return effectiveness;
+
+            // Absorber immunities
+            if ((trait === "Absorber-Basic" && attackingType === "basic") ||
+                (trait === "Absorber-Earth" && attackingType === "earth") ||
+                (trait === "Absorber-Ice" && attackingType === "ice") ||
+                (trait === "Absorber-Spark" && attackingType === "spark")) {
+                return 0;
+            }
+
+
+            if (trait === "Fireproof Armour" && attackingType === "fire") {
+                if (effectiveness >= 3.9) return 2;       // 4x → 2x
+                if (effectiveness >= 1.9) return 1;       // 2x → 1x
+                if (Math.abs(effectiveness - 1) < 0.1) return 0.5;  // 1x → 0.5x
+                if (effectiveness <= 0.51) return 0.25;   // 0.5x → 0.25x
+            }
+
+
+            if ((trait === "Arid" && attackingType === "water") ||
+                (trait === "Bright Lights" && attackingType === "dark") ||
+                (trait === "Caliginous" && attackingType === "light") ||
+                (trait === "Chlorokinesis" && attackingType === "plant") ||
+                (trait === "Conductor" && attackingType === "spark") ||
+                (trait === "Divine Beast" && attackingType === "beast") ||
+                (trait === "Filament" && attackingType === "spark") ||
+                (trait === "Fire Up" && attackingType === "fire") ||
+                (trait === "Hard Candy" && attackingType === "fire") ||
+                (trait === "Herbivore" && attackingType === "plant") ||
+                (trait === "Levitate" && attackingType === "earth") ||
+                (trait === "Melting Point" && attackingType === "ice") ||
+                (trait === "Skyborn" && attackingType === "air") ||
+                (trait === "Stormwater" && attackingType === "water") ||
+                (trait === "Water Absorb" && attackingType === "water")) {
+                return 0;
+            }
+
+
+            if (trait === "Karna" && attackingType === "earth") {
+                return effectiveness * 0.5;
+            }
+
+            if (trait === "Nitelite" && attackingType === "dark") {
+                return effectiveness * 0.5;
+            }
+
+            if (trait === "Tumble" && attackingType === "melee") {
+                return effectiveness * 0.5;
+            }
+
+            if ((trait === "Mushboom" || trait === "Puffball") && attackingType === "air") {
+                return effectiveness * 0.25;
+            }
+
+
+            if (trait === "Apex" && (primary === "beast" || secondary === "beast")) {
+                if (typeChart["beast"][attackingType] !== 1) {
+                    return effectiveness / typeChart["beast"][attackingType];
+                }
+            }
+
+            if (trait === "Resilience" && effectiveness < 0.5) {
+                return effectiveness * 0.25;
+            }
+
+            if (trait === "Spiteful" && effectiveness !== 0) {
+                return 1 / effectiveness;
+            }
+
+            if (trait === "Unbreakable" && effectiveness > 1) {
+                return effectiveness * 0.75; 
+            }
+
+            return effectiveness;
+        }
+
+        function calculateWeaknesses(primary, secondary, trait) {
+            const results = {};
+
+            allTypes.forEach(attackingType => {
+                const primaryEffect = typeChart[primary][attackingType];
+                const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
+
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
+
+                if (combinedEffect > 1) {
+                    if (combinedEffect >= 3.9) { 
+                        results[attackingType] = 'weak-4x';
+                    } else if (combinedEffect > 1.9) {
+                        results[attackingType] = 'weak-2x';
+                    } else if (combinedEffect > 1.1) {
+                        results[attackingType] = 'weak-075x';
+                    }
+                }
+            });
+
+            return results;
+        }
+
+        function calculateResistances(primary, secondary, trait) {
+            const results = {};
+
+            allTypes.forEach(attackingType => {
+                const primaryEffect = typeChart[primary][attackingType];
+                const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
+
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
+
+                if (combinedEffect < 1 && combinedEffect > 0) {
+                    if (combinedEffect <= 0.26) { 
+                        results[attackingType] = 'resist-025x';
+                    } else if (combinedEffect < 0.9) {
+                        results[attackingType] = 'resist-05x';
+                    }
+                }
+            });
+
+            return results;
+        }
+
+        function calculateImmunities(primary, secondary, trait) {
+            const results = {};
+
+            allTypes.forEach(attackingType => {
+                const primaryEffect = typeChart[primary][attackingType];
+                const secondaryEffect = secondary ? typeChart[secondary][attackingType] : 1;
+                let combinedEffect = primaryEffect * secondaryEffect;
+
+                combinedEffect = applyTraitEffects(primary, secondary, trait, attackingType, combinedEffect);
+
+                if (Math.abs(combinedEffect) < 0.1) { 
+                    results[attackingType] = 'immune';
+                }
+            });
+
+            return results;
+        }
+
+        function updateResultList(selector, typeEffects, effectType = '') {
+            const element = document.querySelector(selector);
+
+            if (Object.keys(typeEffects).length === 0) {
+                element.innerHTML = '<span class="none">None</span>';
+                return;
+            }
+
+            element.innerHTML = '';
+
+            const typesArray = Object.entries(typeEffects)
+                .sort((a, b) => {
+                    if (a[1] !== b[1]) {
+                        return a[1].localeCompare(b[1]);
+                    }
+                    return a[0].localeCompare(b[0]);
+                });
+
+            typesArray.forEach(([type, effect]) => {
+                const badge = document.createElement('span');
+                badge.className = `type-badge ${type}`;
+
+                if (effectType) {
+                    badge.classList.add(effect);
+                }
+
+                let text = type.charAt(0).toUpperCase() + type.slice(1);
+                if (effect === 'weak-4x') text += ' (4×)';
+                else if (effect === 'weak-2x') text += ' (2×)';
+                else if (effect === 'weak-075x') text += ' (1.5×)';
+                else if (effect === 'resist-025x') text += ' (¼×)';
+                else if (effect === 'resist-05x') text += ' (½×)';
+                if (effect === 'immune') badge.classList.add('immune');
+
+                badge.textContent = text;
+                element.appendChild(badge);
+            });
+        }
+
+        function updateTeamSummary() {
+            const allWeaknesses = {};
+            const allResistances = {};
+            const allImmunities = new Set();
+
+            document.querySelectorAll('.doodle-box').forEach((box, index) => {
+                const primary = box.querySelector('.primary-type').value;
+                const secondary = box.querySelector('.secondary-type').value;
+                const trait = box.querySelector('.trait').value;
+
+                if (primary) {
+                    const weaknesses = calculateWeaknesses(primary, secondary, trait);
+                    Object.entries(weaknesses).forEach(([type, effect]) => {
+                        if (!allWeaknesses[type]) allWeaknesses[type] = { count: 0, maxEffect: effect };
+                        allWeaknesses[type].count++;
+                        if (effect === 'weak-4x') allWeaknesses[type].maxEffect = 'weak-4x';
+                        else if (allWeaknesses[type].maxEffect !== 'weak-4x' && effect === 'weak-2x') {
+                            allWeaknesses[type].maxEffect = 'weak-2x';
                         }
-                    };
-                });
-
-                const teamCode = btoa(JSON.stringify(teamData));
-                
-                navigator.clipboard.writeText(teamCode)
-                    .then(() => alert("Team code copied to clipboard!"))
-                    .catch(() => {
-                        const textarea = document.createElement("textarea");
-                        textarea.value = teamCode;
-                        document.body.appendChild(textarea);
-                        textarea.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(textarea);
-                        alert("Team code copied!");
+                        else if (allWeaknesses[type].maxEffect !== 'weak-4x' && 
+                                 allWeaknesses[type].maxEffect !== 'weak-2x' && 
+                                 effect === 'weak-075x') {
+                            allWeaknesses[type].maxEffect = 'weak-075x';
+                        }
                     });
-            } catch (error) {
-                console.error("Copy failed:", error);
-                alert("Error generating team code. Check console for details.");
-            }
+
+                    const resistances = calculateResistances(primary, secondary, trait);
+                    Object.entries(resistances).forEach(([type, effect]) => {
+                        if (!allResistances[type]) allResistances[type] = { count: 0, maxEffect: effect };
+                        allResistances[type].count++;
+                        if (effect === 'resist-025x') allResistances[type].maxEffect = 'resist-025x';
+                        else if (allResistances[type].maxEffect !== 'resist-025x' && effect === 'resist-05x') {
+                            allResistances[type].maxEffect = 'resist-05x';
+                        }
+                    });
+
+                    const immunities = calculateImmunities(primary, secondary, trait);
+                    Object.keys(immunities).forEach(type => {
+                        allImmunities.add(type);
+                    });
+                }
+            });
+
+            updateTeamResultList('#team-weaknesses', allWeaknesses, 'weakness');
+            updateTeamResultList('#team-resistances', allResistances, 'resist');
+            updateTeamResultList('#team-immunities', allImmunities);
+
+            const noResistances = allTypes.filter(type => {
+                return !allResistances[type] && !allImmunities.has(type);
+            });
+            updateTeamResultList('#team-no-resistances', noResistances);
         }
 
-        function importFromText() {
-            const text = prompt("Paste Doodle text (format: Doodle @ Held Item\nTrait\nMove 1 / Move 2 / Move 3 / Move 4\nStats: +Stat1, +Stat2\nEquipment: Helmet / Amulet / Artifact)");
-            if (!text) return;
+        function updateTeamResultList(selector, typeData, effectType = '') {
+            const element = document.querySelector(selector);
 
-            try {
-                const lines = text.split('\n').map(line => line.trim());
-                
-                const firstLineParts = lines[0].split(' @ ');
-                const doodleName = firstLineParts[0].trim();
-                const heldItem = firstLineParts.length > 1 ? firstLineParts[1].trim() : "";
-                
-                const trait = lines[1] || "";
-                
-                const movesLine = lines[2] || "";
-                const moves = movesLine.split('/').map(move => move.trim()).filter(move => move);
-                
-                let stats = ["", ""];
-                if (lines.length > 3 && lines[3].startsWith("Stats:")) {
-                    const statsLine = lines[3].replace("Stats:", "").trim();
-                    stats = statsLine.split(',').map(stat => stat.trim()).filter(stat => stat);
-                }
-                
-                let equipment = { helmet: "None", amulet: "None", artifact: "None" };
-                if (lines.length > 4 && lines[4].startsWith("Equipment:")) {
-                    const equipLine = lines[4].replace("Equipment:", "").trim();
-                    const equipParts = equipLine.split('/').map(e => e.trim());
-                    if (equipParts.length >= 1) equipment.helmet = equipParts[0] || "None";
-                    if (equipParts.length >= 2) equipment.amulet = equipParts[1] || "None";
-                    if (equipParts.length >= 3) equipment.artifact = equipParts[2] || "None";
-                }
-                
-                const cards = document.querySelectorAll(".doodle-card");
-                let emptyCard = null;
-                
-                for (let card of cards) {
-                    if (!card.querySelector("select").value) {
-                        emptyCard = card;
-                        break;
-                    }
-                }
-                
-                if (!emptyCard) {
-                    const teamContainer = document.getElementById("team-container");
-                    if (teamContainer.children.length < 6) {
-                        emptyCard = createDoodleCard(teamContainer.children.length);
-                        teamContainer.appendChild(emptyCard);
-                    } else {
-                        alert("Team is full! Clear a slot first.");
-                        return;
-                    }
-                }
-                
-                const doodleSelect = emptyCard.querySelector("select");
-                doodleSelect.value = doodleName;
-                
-                if (doodleSelect.value) {
-                    const selectedOption = doodleSelect.options[doodleSelect.selectedIndex];
-                    const doodleImage = emptyCard.querySelector(".doodle-image");
-                    if (selectedOption.dataset.image) {
-                        doodleImage.style.backgroundImage = `url(${selectedOption.dataset.image})`;
-                        doodleImage.textContent = "";
-                    }
-                }
-                
-                const moveSelectors = emptyCard.querySelectorAll(".moves-container select");
-                moves.forEach((move, i) => {
-                    if (moveSelectors[i] && move) {
-                        moveSelectors[i].value = move;
-                        
-                        const option = moveSelectors[i].options[moveSelectors[i].selectedIndex];
-                        moveSelectors[i].classList.remove(
-                            'mythic-selected', 'fire-selected', 'water-selected',
-                            'plant-selected', 'electric-selected', 'beast-selected',
-                            'air-selected', 'bug-selected', 'earth-selected', 'mind-selected',
-                            'melee-selected', 'food-selected', 'light-selected',
-                            'crystal-selected', 'metal-selected', 'spirit-selected',
-                            'ice-selected', 'dark-selected', 'poison-selected'
-                        );
-                        
-                        if (option.classList.contains('mythic')) {
-                            moveSelectors[i].classList.add('mythic-selected');
-                        } else if (option.classList.contains('fire')) {
-                            moveSelectors[i].classList.add('fire-selected');
-                        } else if (option.classList.contains('water')) {
-                            moveSelectors[i].classList.add('water-selected');
-                        } else if (option.classList.contains('plant')) {
-                            moveSelectors[i].classList.add('plant-selected');
-                        } else if (option.classList.contains('electric')) {
-                            moveSelectors[i].classList.add('electric-selected');
-                        } else if (option.classList.contains('beast')) {
-                            moveSelectors[i].classList.add('beast-selected');
-                        } else if (option.classList.contains('air')) {
-                            moveSelectors[i].classList.add('air-selected');
-                        } else if (option.classList.contains('bug')) {
-                            moveSelectors[i].classList.add('bug-selected');
-                        } else if (option.classList.contains('earth')) {
-                            moveSelectors[i].classList.add('earth-selected');
-                        } else if (option.classList.contains('mind')) {
-                            moveSelectors[i].classList.add('mind-selected');
-                        } else if (option.classList.contains('melee')) {
-                            moveSelectors[i].classList.add('melee-selected');
-                        } else if (option.classList.contains('food')) {
-                            moveSelectors[i].classList.add('food-selected');
-                        } else if (option.classList.contains('light')) {
-                            moveSelectors[i].classList.add('light-selected');
-                        } else if (option.classList.contains('crystal')) {
-                            moveSelectors[i].classList.add('crystal-selected');
-                        } else if (option.classList.contains('metal')) {
-                            moveSelectors[i].classList.add('metal-selected');
-                        } else if (option.classList.contains('spirit')) {
-                            moveSelectors[i].classList.add('spirit-selected');
-                        } else if (option.classList.contains('ice')) {
-                            moveSelectors[i].classList.add('ice-selected');
-                        } else if (option.classList.contains('dark')) {
-                            moveSelectors[i].classList.add('dark-selected');
-                        } else if (option.classList.contains('poison')) {
-                            moveSelectors[i].classList.add('poison-selected');
-                        }
-                    }
-                });
-                
-                const traitSelect = emptyCard.querySelector(".trait-select");
-                if (traitSelect && trait) traitSelect.value = trait;
-                
-                const heldItemSelect = emptyCard.querySelector(".held-item-select");
-                if (heldItemSelect && heldItem) heldItemSelect.value = heldItem;
-                
-                const statSelectors = emptyCard.querySelectorAll(".stat-select");
-                stats.forEach((stat, i) => {
-                    if (statSelectors[i] && stat) {
-                        statSelectors[i].value = stat;
-                    }
-                });
-                
-                const helmetSelect = emptyCard.querySelector(".helmet-select");
-                const amuletSelect = emptyCard.querySelector(".amulet-select");
-                const artifactSelect = emptyCard.querySelector(".artifact-select");
-                
-                if (helmetSelect) helmetSelect.value = equipment.helmet;
-                if (amuletSelect) amuletSelect.value = equipment.amulet;
-                if (artifactSelect) artifactSelect.value = equipment.artifact;
-                
-                alert("Doodle imported successfully!");
-            } catch (error) {
-                console.error("Import failed:", error);
-                alert("Error importing doodle. Please check the format and try again.");
+            if ((effectType === 'weakness' || effectType === 'resist') ? 
+                Object.keys(typeData).length === 0 : typeData.size === 0) {
+                element.innerHTML = '<span class="none">None</span>';
+                return;
             }
-        }
 
-        function importFromCode() {
-            const teamCode = prompt("Paste team code:");
-            if (!teamCode) return;
+            element.innerHTML = '';
 
-            try {
-                const teamData = JSON.parse(atob(teamCode));
-                const teamContainer = document.getElementById("team-container");
-                
-                teamContainer.innerHTML = "";
-                
-                teamData.forEach((member, index) => {
-                    if (member) {
-                        const card = createDoodleCard(index);
-                        
-                        const doodleSelect = card.querySelector("select");
-                        doodleSelect.value = member.doodle || "";
-                        
-                        if (doodleSelect.value) {
-                            const selectedOption = doodleSelect.options[doodleSelect.selectedIndex];
-                            const doodleImage = card.querySelector(".doodle-image");
-                            if (selectedOption.dataset.image) {
-                                doodleImage.style.backgroundImage = `url(${selectedOption.dataset.image})`;
-                                doodleImage.textContent = "";
-                            }
-                        }
-                        
-                        const moveSelectors = card.querySelectorAll(".moves-container select");
-                        if (member.moves) {
-                            member.moves.forEach((move, i) => {
-                                if (moveSelectors[i] && move) {
-                                    moveSelectors[i].value = move;
-                                    
-                                    const option = moveSelectors[i].options[moveSelectors[i].selectedIndex];
-                                    moveSelectors[i].classList.remove(
-                                        'mythic-selected', 'fire-selected', 'water-selected',
-                                        'plant-selected', 'electric-selected', 'beast-selected',
-                                        'air-selected', 'bug-selected', 'earth-selected', 'mind-selected',
-                                        'melee-selected', 'food-selected', 'light-selected',
-                                        'crystal-selected', 'metal-selected', 'spirit-selected',
-                                        'ice-selected', 'dark-selected', 'poison-selected'
-                                    );
-                                    
-                                    if (option.classList.contains('mythic')) {
-                                        moveSelectors[i].classList.add('mythic-selected');
-                                    } else if (option.classList.contains('fire')) {
-                                        moveSelectors[i].classList.add('fire-selected');
-                                    } else if (option.classList.contains('water')) {
-                                        moveSelectors[i].classList.add('water-selected');
-                                    } else if (option.classList.contains('plant')) {
-                                        moveSelectors[i].classList.add('plant-selected');
-                                    } else if (option.classList.contains('electric')) {
-                                        moveSelectors[i].classList.add('electric-selected');
-                                    } else if (option.classList.contains('beast')) {
-                                        moveSelectors[i].classList.add('beast-selected');
-                                    } else if (option.classList.contains('air')) {
-                                        moveSelectors[i].classList.add('air-selected');
-                                    } else if (option.classList.contains('bug')) {
-                                        moveSelectors[i].classList.add('bug-selected');
-                                    } else if (option.classList.contains('earth')) {
-                                        moveSelectors[i].classList.add('earth-selected');
-                                    } else if (option.classList.contains('mind')) {
-                                        moveSelectors[i].classList.add('mind-selected');
-                                    } else if (option.classList.contains('melee')) {
-                                        moveSelectors[i].classList.add('melee-selected');
-                                    } else if (option.classList.contains('food')) {
-                                        moveSelectors[i].classList.add('food-selected');
-                                    } else if (option.classList.contains('light')) {
-                                        moveSelectors[i].classList.add('light-selected');
-                                    } else if (option.classList.contains('crystal')) {
-                                        moveSelectors[i].classList.add('crystal-selected');
-                                    } else if (option.classList.contains('metal')) {
-                                        moveSelectors[i].classList.add('metal-selected');
-                                    } else if (option.classList.contains('spirit')) {
-                                        moveSelectors[i].classList.add('spirit-selected');
-                                    } else if (option.classList.contains('ice')) {
-                                        moveSelectors[i].classList.add('ice-selected');
-                                    } else if (option.classList.contains('dark')) {
-                                        moveSelectors[i].classList.add('dark-selected');
-                                    } else if (option.classList.contains('poison')) {
-                                        moveSelectors[i].classList.add('poison-selected');
-                                    }
-                                }
-                            });
-                        }
-                        
-                        if (member.trait) {
-                            const traitSelect = card.querySelector(".trait-select");
-                            if (traitSelect) traitSelect.value = member.trait;
-                        }
-                        
-                        if (member.heldItem) {
-                            const heldItemSelect = card.querySelector(".held-item-select");
-                            if (heldItemSelect) heldItemSelect.value = member.heldItem;
-                        }
-                        
-                        if (member.stats) {
-                            const statSelectors = card.querySelectorAll(".stat-select");
-                            member.stats.forEach((stat, i) => {
-                                if (statSelectors[i] && stat) {
-                                    statSelectors[i].value = stat;
-                                }
-                            });
-                        }
-                        
-                        if (member.equipment) {
-                            const helmetSelect = card.querySelector(".helmet-select");
-                            const amuletSelect = card.querySelector(".amulet-select");
-                            const artifactSelect = card.querySelector(".artifact-select");
-                            
-                            if (helmetSelect && member.equipment.helmet) helmetSelect.value = member.equipment.helmet;
-                            if (amuletSelect && member.equipment.amulet) amuletSelect.value = member.equipment.amulet;
-                            if (artifactSelect && member.equipment.artifact) artifactSelect.value = member.equipment.artifact;
-                        }
-                        
-                        teamContainer.appendChild(card);
-                    }
-                });
-                
-                alert("Team imported successfully!");
-            } catch (error) {
-                console.error("Import failed:", error);
-                alert("Invalid team code! Please check and try again.");
+            let typesArray;
+            if (effectType === 'weakness' || effectType === 'resist') {
+                typesArray = Object.entries(typeData)
+                    .map(([type, data]) => ({
+                        type,
+                        count: data.count,
+                        effect: data.maxEffect
+                    }))
+                    .sort((a, b) => {
+                        if (b.count !== a.count) return b.count - a.count;
+                        if (b.effect !== a.effect) return b.effect.localeCompare(a.effect);
+                        return a.type.localeCompare(b.type);
+                    });
+            } else {
+                typesArray = Array.isArray(typeData) ? 
+                    typeData.sort((a, b) => a.localeCompare(b)) : 
+                    Array.from(typeData).sort((a, b) => a.localeCompare(b));
             }
-        }
 
-        initializeTeam();
+            typesArray.forEach(type => {
+                const badge = document.createElement('span');
+                let typeName = typeof type === 'object' ? type.type : type;
+
+                badge.className = `type-badge ${typeName}`;
+
+                if (effectType) {
+                    badge.classList.add(typeof type === 'object' ? type.effect : '');
+                }
+
+                let text = typeName.charAt(0).toUpperCase() + typeName.slice(1);
+                if (effectType === 'weakness' || effectType === 'resist') {
+                    text += ` (${type.count})`;
+                    if (type.effect === 'weak-4x') text += ' 4×';
+                    else if (type.effect === 'weak-2x') text += ' 2×';
+                    else if (type.effect === 'weak-075x') text += ' 1.5×';
+                    else if (type.effect === 'resist-025x') text += ' ¼×';
+                    else if (type.effect === 'resist-05x') text += ' ½×';
+                }
+
+                badge.textContent = text;
+                element.appendChild(badge);More actions
+            });
+        }
     </script>
 </body>
 </html>
