@@ -4,32 +4,107 @@
     <title>Doodle World Type Coverage</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #000;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
             color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+            max-width: 1300px;
+            margin: 0 auto;
         }
 
         h1 {
-            text-align: center;
             color: #fff;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .mode-toggle {
+            margin: 15px 0;
+        }
+
+        .mode-toggle button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+
+        .mode-toggle button.active {
+            background-color: #4CAF50;
+        }
+
+        .mode-toggle button:hover {
+            background-color: #555;
+        }
+
+        .teambuilder-link {
+            margin-bottom: 20px;
+        }
+
+        .teambuilder-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .teambuilder-link a:hover {
+            text-decoration: underline;
         }
 
         .team-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
         .doodle-box {
-            background: #222;
-            padding: 15px;
+            border: 2px solid #444;
+            padding: 20px;
+            background-color: #222;
+            text-align: left;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .remove-doodle {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #555;
+            color: white;
+            border: none;
             border-radius: 4px;
-            border: 1px solid #444;
+            padding: 4px 10px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .remove-doodle:hover {
+            background: #666;
+        }
+
+        .add-doodle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+
+        .add-doodle:hover {
+            background-color: #45a049;
         }
 
         .type-select-container {
@@ -44,6 +119,22 @@
             background-color: #333;
             color: #fff;
             margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-type-btn {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .add-type-btn:hover {
+            background-color: #666;
         }
 
         .result-title {
@@ -60,11 +151,13 @@
             border: 1px solid #444;
             margin-bottom: 15px;
             color: #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .type-badge {
-            display: inline-block;
-            padding: 3px 8px;
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px 3px 30px;
             border-radius: 12px;
             color: white;
             font-size: 12px;
@@ -72,7 +165,82 @@
             white-space: nowrap;
             margin-right: 5px;
             margin-bottom: 5px;
+            position: relative;
         }
+
+        .type-badge::before {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Type-specific backgrounds and logos */
+        .basic { background-color: #9E9E9E; }
+        .basic::before { background-image: url('logos/basic.webp'); }
+        
+        .fire { background-color: #FF5722; }
+        .fire::before { background-image: url('logos/fire.webp'); }
+        
+        .water { background-color: #2196F3; }
+        .water::before { background-image: url('logos/water.webp'); }
+        
+        .plant { background-color: #4CAF50; }
+        .plant::before { background-image: url('logos/plant.webp'); }
+        
+        .spark { background-color: #FFEB3B; color: #333; }
+        .spark::before { background-image: url('logos/spark.webp'); }
+        
+        .beast { background-color: #795548; }
+        .beast::before { background-image: url('logos/beast.webp'); }
+        
+        .air { background-color: #f0f8ff; color: #333; }
+        .air::before { background-image: url('logos/air.webp'); }
+        
+        .insect { background-color: #8BC34A; }
+        .insect::before { background-image: url('logos/insect.webp'); }
+        
+        .earth { background-color: #795548; }
+        .earth::before { background-image: url('logos/earth.webp'); }
+        
+        .mind { background-color: #FF69B4; color: #333; }
+        .mind::before { background-image: url('logos/mind.webp'); }
+        
+        .melee { background-color: #F44336; }
+        .melee::before { background-image: url('logos/melee.webp'); }
+        
+        .food { background-color: #FF9800; }
+        .food::before { background-image: url('logos/food.webp'); }
+        
+        .light { background-color: #FFC107; color: #333; }
+        .light::before { background-image: url('logos/light.webp'); }
+        
+        .crystal { background-color: #00BCD4; }
+        .crystal::before { background-image: url('logos/crystal.webp'); }
+        
+        .metal { background-color: #607D8B; }
+        .metal::before { background-image: url('logos/metal.webp'); }
+        
+        .spirit { background-color: #9C27B0; }
+        .spirit::before { background-image: url('logos/spirit.webp'); }
+        
+        .ice { background-color: #00BCD4; }
+        .ice::before { background-image: url('logos/ice.webp'); }
+        
+        .dark { background-color: #433; }
+        .dark::before { background-image: url('logos/dark.webp'); }
+        
+        .poison { background-color: #9C27B0; }
+        .poison::before { background-image: url('logos/poison.webp'); }
+        
+        .mythic { background-color: #FF5722; }
+        .mythic::before { background-image: url('logos/mythic.webp'); }
 
         .weakness-4x {
             border: 2px solid #ff0000;
@@ -101,9 +269,10 @@
         .team-summary {
             background: #222;
             padding: 20px;
-            border-radius: 4px;
+            border-radius: 8px;
             border: 1px solid #444;
             margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .summary-grid {
@@ -119,6 +288,7 @@
             border-radius: 4px;
             border: 1px solid #444;
             min-height: 100px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .summary-title {
@@ -127,51 +297,21 @@
             color: #fff;
         }
 
-        .basic { background-color: #9E9E9E; }
-        .fire { background-color: #FF5722; }
-        .water { background-color: #2196F3; }
-        .plant { background-color: #4CAF50; }
-        .spark { background-color: #FFEB3B; color: #333; }
-        .beast { background-color: #795548; }
-        .air { background-color: #f0f8ff; color: #333; }
-        .insect { background-color: #8BC34A; }
-        .earth { background-color: #795548; }
-        .mind { background-color: #FF69B4; color: #333; }
-        .melee { background-color: #F44336; }
-        .food { background-color: #FF9800; }
-        .light { background-color: #FFC107; color: #333; }
-        .crystal { background-color: #00BCD4; }
-        .metal { background-color: #607D8B; }
-        .spirit { background-color: #9C27B0; }
-        .ice { background-color: #00BCD4; }
-        .dark { background-color: #433; }
-        .poison { background-color: #9C27B0; }
-        .mythic { background-color: #FF5722; }
-
         .none {
             color: #666;
             font-style: italic;
         }
 
-        .teambuilder-link {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .teambuilder-link a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        .teambuilder-link a:hover {
-            text-decoration: underline;
+        @media (max-width: 800px) {
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 600px) {
             .team-container {
                 grid-template-columns: 1fr;
             }
-
             .summary-grid {
                 grid-template-columns: 1fr;
             }
@@ -181,14 +321,21 @@
 <body>
     <h1>Doodle World Type Coverage</h1>
     <div class="teambuilder-link">Check out the <a href="https://bwiffs.github.io/doodle-world-teambuilder/" target="_blank">Doodle World Teambuilder</a></div>
+    
+    <div class="mode-toggle">
+        <button id="defensive-mode" class="active">Defensive Mode</button>
+        <button id="offensive-mode">Offensive Mode</button>
+    </div>
 
     <div class="team-container" id="team-container"></div>
+    
+    <button class="add-doodle" id="add-doodle">Add Doodle</button>
 
     <div class="team-summary">
         <h2>Team Summary</h2>
         <div class="summary-grid">
             <div class="summary-box">
-                <div class="summary-title">Team Weaknesses</div>
+                <div class="summary-title" id="coverage-title">Team Weaknesses</div>
                 <div id="team-weaknesses" class="result-list">None</div>
             </div>
             <div class="summary-box">
@@ -200,7 +347,7 @@
                 <div id="team-immunities" class="result-list">None</div>
             </div>
             <div class="summary-box">
-                <div class="summary-title">No Resistances</div>
+                <div class="summary-title" id="no-coverage-title">No Resistances</div>
                 <div id="team-no-resistances" class="result-list">None</div>
             </div>
         </div>
@@ -340,67 +487,274 @@
             "Unbreakable", "Water Absorb"
         ];
 
-        const teamContainer = document.getElementById('team-container');
+        let currentMode = 'defensive';
+        let doodleCount = 1;
 
-        for (let i = 1; i <= 6; i++) {
+        const teamContainer = document.getElementById('team-container');
+        const addDoodleBtn = document.getElementById('add-doodle');
+        const defensiveModeBtn = document.getElementById('defensive-mode');
+        const offensiveModeBtn = document.getElementById('offensive-mode');
+        const coverageTitle = document.getElementById('coverage-title');
+        const noCoverageTitle = document.getElementById('no-coverage-title');
+
+        // Initialize with one doodle box
+        createDoodleBox();
+
+        function createDoodleBox() {
             const doodleBox = document.createElement('div');
             doodleBox.className = 'doodle-box';
-            doodleBox.innerHTML = `
-                <h3>Doodle ${i}</h3>
-                <div class="type-select-container">
-                    <select class="type-select primary-type" data-doodle="${i}">
-                        <option value="">Primary Type</option>
-                        ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
-                    </select>
-                    <select class="type-select secondary-type" data-doodle="${i}">
-                        <option value="">Secondary Type</option>
-                        ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
-                    </select>
-                    <select class="type-select trait" data-doodle="${i}">
-                        <option value="">Trait</option>
-                        ${traits.map(trait => `<option value="${trait}">${trait}</option>`).join('')}
-                    </select>
-                </div>
-                
-                <div class="result-title">Weaknesses:</div>
-                <div class="result-list weaknesses" data-doodle="${i}"><span class="none">None</span></div>
-                
-                <div class="result-title">Resistances:</div>
-                <div class="result-list resistances" data-doodle="${i}"><span class="none">None</span></div>
-                
-                <div class="result-title">Immunities:</div>
-                <div class="result-list immunities" data-doodle="${i}"><span class="none">None</span></div>
-            `;
+            doodleBox.dataset.index = doodleCount;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-doodle';
+            removeBtn.textContent = 'Remove';
+            removeBtn.onclick = function() {
+                teamContainer.removeChild(doodleBox);
+                updateTeamSummary();
+            };
+            
+            if (currentMode === 'defensive') {
+                doodleBox.innerHTML = `
+                    <h3>Doodle ${doodleCount}</h3>
+                    <div class="type-select-container">
+                        <select class="type-select primary-type" data-doodle="${doodleCount}">
+                            <option value="">Primary Type</option>
+                            ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+                        </select>
+                        <select class="type-select secondary-type" data-doodle="${doodleCount}">
+                            <option value="">Secondary Type</option>
+                            ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+                        </select>
+                        <select class="type-select trait" data-doodle="${doodleCount}">
+                            <option value="">Trait</option>
+                            ${traits.map(trait => `<option value="${trait}">${trait}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="result-title">Weaknesses:</div>
+                    <div class="result-list weaknesses" data-doodle="${doodleCount}"><span class="none">None</span></div>
+                    
+                    <div class="result-title">Resistances:</div>
+                    <div class="result-list resistances" data-doodle="${doodleCount}"><span class="none">None</span></div>
+                    
+                    <div class="result-title">Immunities:</div>
+                    <div class="result-list immunities" data-doodle="${doodleCount}"><span class="none">None</span></div>
+                `;
+            } else {
+                doodleBox.innerHTML = `
+                    <h3>Doodle ${doodleCount}</h3>
+                    <div class="type-select-container" id="type-container-${doodleCount}">
+                        <select class="type-select offensive-type" data-doodle="${doodleCount}">
+                            <option value="">Type 1</option>
+                            ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+                        </select>
+                    </div>
+                    <button class="add-type-btn" data-doodle="${doodleCount}">+ Add Type</button>
+                    
+                    <div class="result-title">Super Effective Against:</div>
+                    <div class="result-list offensive" data-doodle="${doodleCount}"><span class="none">None</span></div>
+                `;
+            }
+            
+            doodleBox.prepend(removeBtn);
             teamContainer.appendChild(doodleBox);
+            doodleCount++;
+            
+            // Add event listeners
+            doodleBox.querySelectorAll('.type-select').forEach(select => {
+                select.addEventListener('change', updateTypeCoverage);
+            });
+
+            if (currentMode === 'offensive') {
+                doodleBox.querySelector('.add-type-btn').addEventListener('click', function() {
+                    addOffensiveType(this.dataset.doodle);
+                });
+            }
         }
 
-        document.querySelectorAll('.type-select').forEach(select => {
-            select.addEventListener('change', updateTypeCoverage);
+        function addOffensiveType(doodleIndex) {
+            const typeContainer = document.getElementById(`type-container-${doodleIndex}`);
+            const typeSelects = typeContainer.querySelectorAll('.offensive-type');
+            
+            if (typeSelects.length >= 4) {
+                alert('Maximum of 4 types per doodle in offensive mode!');
+                return;
+            }
+            
+            const newSelect = document.createElement('select');
+            newSelect.className = 'type-select offensive-type';
+            newSelect.dataset.doodle = doodleIndex;
+            newSelect.innerHTML = `
+                <option value="">Type ${typeSelects.length + 1}</option>
+                ${allTypes.map(type => `<option value="${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</option>`).join('')}
+            `;
+            
+            newSelect.addEventListener('change', updateTypeCoverage);
+            typeContainer.appendChild(newSelect);
+            
+            // Update the add button position
+            const addButton = document.querySelector(`.add-type-btn[data-doodle="${doodleIndex}"]`);
+            typeContainer.parentNode.insertBefore(addButton, typeContainer.nextSibling);
+            
+            updateTypeCoverage.call(newSelect);
+        }
+
+        addDoodleBtn.addEventListener('click', function() {
+            if (teamContainer.children.length < 6) {
+                createDoodleBox();
+            } else {
+                alert('Maximum of 6 doodles reached!');
+            }
+        });
+
+        defensiveModeBtn.addEventListener('click', function() {
+            if (currentMode !== 'defensive') {
+                currentMode = 'defensive';
+                defensiveModeBtn.classList.add('active');
+                offensiveModeBtn.classList.remove('active');
+                coverageTitle.textContent = 'Team Weaknesses';
+                noCoverageTitle.textContent = 'No Resistances';
+                
+                // Recreate all doodle boxes
+                teamContainer.innerHTML = '';
+                doodleCount = 1;
+                for (let i = 0; i < teamContainer.children.length || i < 1; i++) {
+                    createDoodleBox();
+                }
+                
+                updateTeamSummary();
+            }
+        });
+
+        offensiveModeBtn.addEventListener('click', function() {
+            if (currentMode !== 'offensive') {
+                currentMode = 'offensive';
+                offensiveModeBtn.classList.add('active');
+                defensiveModeBtn.classList.remove('active');
+                coverageTitle.textContent = 'Team Coverage';
+                noCoverageTitle.textContent = 'Not Effective Against';
+                
+                // Recreate all doodle boxes
+                teamContainer.innerHTML = '';
+                doodleCount = 1;
+                for (let i = 0; i < teamContainer.children.length || i < 1; i++) {
+                    createDoodleBox();
+                }
+                
+                updateTeamSummary();
+            }
         });
 
         function updateTypeCoverage() {
             const doodleIndex = this.getAttribute('data-doodle');
-            const primaryType = document.querySelector(`.primary-type[data-doodle="${doodleIndex}"]`).value;
-            const secondaryType = document.querySelector(`.secondary-type[data-doodle="${doodleIndex}"]`).value;
-            const trait = document.querySelector(`.trait[data-doodle="${doodleIndex}"]`).value;
+            const doodleBox = document.querySelector(`.doodle-box[data-index="${doodleIndex}"]`);
+            
+            if (currentMode === 'defensive') {
+                const primaryType = doodleBox.querySelector(`.primary-type[data-doodle="${doodleIndex}"]`).value;
+                const secondaryType = doodleBox.querySelector(`.secondary-type[data-doodle="${doodleIndex}"]`).value;
+                const trait = doodleBox.querySelector(`.trait[data-doodle="${doodleIndex}"]`).value;
 
-            if (!primaryType) {
-                document.querySelector(`.weaknesses[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
-                document.querySelector(`.resistances[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
-                document.querySelector(`.immunities[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
-                updateTeamSummary();
-                return;
+                if (!primaryType) {
+                    doodleBox.querySelector(`.weaknesses[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                    doodleBox.querySelector(`.resistances[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                    doodleBox.querySelector(`.immunities[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                    updateTeamSummary();
+                    return;
+                }
+
+                const weaknesses = calculateWeaknesses(primaryType, secondaryType, trait);
+                const resistances = calculateResistances(primaryType, secondaryType, trait);
+                const immunities = calculateImmunities(primaryType, secondaryType, trait);
+
+                updateResultList(`.weaknesses[data-doodle="${doodleIndex}"]`, weaknesses, 'weakness');
+                updateResultList(`.resistances[data-doodle="${doodleIndex}"]`, resistances, 'resist');
+                updateResultList(`.immunities[data-doodle="${doodleIndex}"]`, immunities);
+            } else {
+                const typeSelects = doodleBox.querySelectorAll('.offensive-type');
+                const selectedTypes = Array.from(typeSelects)
+                    .map(select => select.value)
+                    .filter(type => type !== "");
+                
+                if (selectedTypes.length === 0) {
+                    doodleBox.querySelector(`.offensive[data-doodle="${doodleIndex}"]`).innerHTML = '<span class="none">None</span>';
+                    updateTeamSummary();
+                    return;
+                }
+
+                const offensiveCoverage = calculateOffensiveCoverage(selectedTypes);
+                updateResultList(`.offensive[data-doodle="${doodleIndex}"]`, offensiveCoverage, 'offensive');
             }
 
-            const weaknesses = calculateWeaknesses(primaryType, secondaryType, trait);
-            const resistances = calculateResistances(primaryType, secondaryType, trait);
-            const immunities = calculateImmunities(primaryType, secondaryType, trait);
-
-            updateResultList(`.weaknesses[data-doodle="${doodleIndex}"]`, weaknesses, 'weakness');
-            updateResultList(`.resistances[data-doodle="${doodleIndex}"]`, resistances, 'resist');
-            updateResultList(`.immunities[data-doodle="${doodleIndex}"]`, immunities);
-
             updateTeamSummary();
+        }
+
+        function calculateOffensiveCoverage(types) {
+            const results = {};
+            
+            types.forEach(type => {
+                allTypes.forEach(defendingType => {
+                    const effectiveness = typeChart[defendingType][type];
+                    
+                    if (effectiveness > 1) {
+                        if (!results[defendingType] || effectiveness > results[defendingType].effectiveness) {
+                            results[defendingType] = {
+                                effectiveness: effectiveness,
+                                attackingType: type
+                            };
+                        }
+                    }
+                });
+            });
+            
+            const formattedResults = {};
+            Object.entries(results).forEach(([defendingType, data]) => {
+                if (data.effectiveness >= 3.5) {
+                    formattedResults[defendingType] = 'weak-4x';
+                } else if (data.effectiveness > 1.5) {
+                    formattedResults[defendingType] = 'weak-2x';
+                } else if (data.effectiveness > 1.1) {
+                    formattedResults[defendingType] = 'weak-075x';
+                }
+            });
+            
+            return formattedResults;
+        }
+
+        function calculateNotEffectiveTypes(types) {
+            const notEffective = {};
+            
+            allTypes.forEach(defendingType => {
+                let isEffective = false;
+                
+                types.forEach(type => {
+                    const effectiveness = typeChart[defendingType][type];
+                    if (effectiveness > 1) {
+                        isEffective = true;
+                    }
+                });
+                
+                if (!isEffective) {
+                    let resistanceLevel = 1;
+                    types.forEach(type => {
+                        const effectiveness = typeChart[defendingType][type];
+                        if (effectiveness < 1) {
+                            resistanceLevel *= effectiveness;
+                        }
+                    });
+                    
+                    if (resistanceLevel < 1) {
+                        if (resistanceLevel <= 0.26) {
+                            notEffective[defendingType] = 'resist-025x';
+                        } else {
+                            notEffective[defendingType] = 'resist-05x';
+                        }
+                    } else {
+                        notEffective[defendingType] = 'neutral';
+                    }
+                }
+            });
+            
+            return notEffective;
         }
 
         function applyTraitEffects(primary, secondary, trait, attackingType, effectiveness) {
@@ -416,10 +770,10 @@
 
             // Fireproof Armour reduces fire damage
             if (trait === "Fireproof Armour" && attackingType === "fire") {
-                if (effectiveness > 3.5) return 2;       // 4x → 2x
-                if (effectiveness > 1.5) return 1;       // 2x → 1x
-                if (effectiveness > 0.9 && effectiveness < 1.1) return 0.5;  // 1x → 0.5x
-                if (effectiveness < 0.6) return 0.25;   // 0.5x → 0.25x
+                if (effectiveness > 3.5) return 2;
+                if (effectiveness > 1.5) return 1;
+                if (effectiveness > 0.9 && effectiveness < 1.1) return 0.5;
+                if (effectiveness < 0.6) return 0.25;
             }
 
             // Full immunities
@@ -547,6 +901,8 @@
         function updateResultList(selector, typeEffects, effectType = '') {
             const element = document.querySelector(selector);
 
+            if (!element) return;
+            
             if (Object.keys(typeEffects).length === 0) {
                 element.innerHTML = '<span class="none">None</span>';
                 return;
@@ -584,14 +940,22 @@
         }
 
         function updateTeamSummary() {
+            if (currentMode === 'defensive') {
+                updateDefensiveTeamSummary();
+            } else {
+                updateOffensiveTeamSummary();
+            }
+        }
+
+        function updateDefensiveTeamSummary() {
             const allWeaknesses = {};
             const allResistances = {};
             const allImmunities = new Set();
 
-            document.querySelectorAll('.doodle-box').forEach((box, index) => {
-                const primary = box.querySelector('.primary-type').value;
-                const secondary = box.querySelector('.secondary-type').value;
-                const trait = box.querySelector('.trait').value;
+            document.querySelectorAll('.doodle-box').forEach((box) => {
+                const primary = box.querySelector('.primary-type')?.value;
+                const secondary = box.querySelector('.secondary-type')?.value;
+                const trait = box.querySelector('.trait')?.value;
 
                 if (primary) {
                     const weaknesses = calculateWeaknesses(primary, secondary, trait);
@@ -636,6 +1000,43 @@
             updateTeamResultList('#team-no-resistances', noResistances);
         }
 
+        function updateOffensiveTeamSummary() {
+            const allCoverage = {};
+            const allTeamTypes = [];
+            
+            document.querySelectorAll('.doodle-box').forEach((box) => {
+                const typeSelects = box.querySelectorAll('.offensive-type');
+                const selectedTypes = Array.from(typeSelects)
+                    .map(select => select.value)
+                    .filter(type => type !== "");
+                
+                if (selectedTypes.length > 0) {
+                    allTeamTypes.push(...selectedTypes);
+                    const coverage = calculateOffensiveCoverage(selectedTypes);
+                    Object.keys(coverage).forEach(type => {
+                        if (!allCoverage[type]) allCoverage[type] = 0;
+                        allCoverage[type]++;
+                    });
+                }
+            });
+            
+            // Convert to format expected by updateTeamResultList
+            const coverageData = {};
+            Object.entries(allCoverage).forEach(([type, count]) => {
+                coverageData[type] = { count, maxEffect: 'weak-2x' };
+            });
+            
+            updateTeamResultList('#team-weaknesses', coverageData, 'weakness');
+            
+            // Calculate not effective types
+            const notEffective = calculateNotEffectiveTypes(allTeamTypes);
+            updateTeamResultList('#team-no-resistances', notEffective, 'resist');
+            
+            // Clear other summary boxes
+            document.getElementById('team-resistances').innerHTML = '<span class="none">N/A in offensive mode</span>';
+            document.getElementById('team-immunities').innerHTML = '<span class="none">N/A in offensive mode</span>';
+        }
+
         function updateTeamResultList(selector, typeData, effectType = '') {
             const element = document.querySelector(selector);
 
@@ -652,8 +1053,8 @@
                 typesArray = Object.entries(typeData)
                     .map(([type, data]) => ({
                         type,
-                        count: data.count,
-                        effect: data.maxEffect
+                        count: typeof data === 'object' ? data.count : 0,
+                        effect: typeof data === 'object' ? data.maxEffect : data
                     }))
                     .sort((a, b) => {
                         if (b.count !== a.count) return b.count - a.count;
@@ -669,21 +1070,24 @@
             typesArray.forEach(type => {
                 const badge = document.createElement('span');
                 let typeName = typeof type === 'object' ? type.type : type;
+                let effect = typeof type === 'object' ? type.effect : '';
 
                 badge.className = `type-badge ${typeName}`;
 
                 if (effectType) {
-                    badge.classList.add(typeof type === 'object' ? type.effect : '');
+                    badge.classList.add(effect);
                 }
 
                 let text = typeName.charAt(0).toUpperCase() + typeName.slice(1);
                 if (effectType === 'weakness' || effectType === 'resist') {
-                    text += ` (${type.count})`;
-                    if (type.effect === 'weak-4x') text += ' 4×';
-                    else if (type.effect === 'weak-2x') text += ' 2×';
-                    else if (type.effect === 'weak-075x') text += ' 1.5×';
-                    else if (type.effect === 'resist-025x') text += ' ¼×';
-                    else if (type.effect === 'resist-05x') text += ' ½×';
+                    if (typeof type === 'object' && type.count > 0) {
+                        text += ` (${type.count})`;
+                    }
+                    if (effect === 'weak-4x') text += ' 4×';
+                    else if (effect === 'weak-2x') text += ' 2×';
+                    else if (effect === 'weak-075x') text += ' 1.5×';
+                    else if (effect === 'resist-025x') text += ' ¼×';
+                    else if (effect === 'resist-05x') text += ' ½×';
                 }
 
                 badge.textContent = text;
